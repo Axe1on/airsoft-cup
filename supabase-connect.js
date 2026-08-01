@@ -74,15 +74,29 @@ window.supabase = {
                         };
                     },
                     delete: function() {
+                        /* Возвращаем объект со всеми методами фильтрации удаления для script.js */
                         return {
+                            url: tableUrl,
+                            /* Метод фильтрации "равно" (например, удалить конкретного игрока по имени) */
                             eq: async function(column, value) {
                                 try {
-                                    const res = await fetch(tableUrl + '?' + column + '=eq.' + encodeURIComponent(value), {
+                                    const res = await fetch(this.url + '?' + column + '=eq.' + encodeURIComponent(value), {
                                         method: 'DELETE',
-                                        headers: {
-                                            'apikey': key,
-                                            'Authorization': 'Bearer ' + key
-                                        }
+                                        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+                                    });
+                                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                                    return { error: null };
+                                } catch (err) {
+                                    return { error: err };
+                                }
+                            },
+                            /* Метод фильтрации "не равно" (используется при очистке истории матчей) */
+                            neq: async function(column, value) {
+                                try {
+                                    /* В REST API Supabase оператор не равно пишется как neq */
+                                    const res = await fetch(this.url + '?' + column + '=neq.' + encodeURIComponent(value), {
+                                        method: 'DELETE',
+                                        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
                                     });
                                     if (!res.ok) throw new Error('HTTP ' + res.status);
                                     return { error: null };
