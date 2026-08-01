@@ -1,39 +1,25 @@
 /* АВТОНОМНЫЙ ДРАЙВЕР ДЛЯ СВЯЗИ С ОБЛАКОМ SUPABASE */
 window.supabase = {
     createClient: function(url, key) {
-        const headers = {
-            'apikey': key,
-            'Authorization': 'Bearer ' + key,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=representation'
-        };
-
         return {
             from: function(tableName) {
                 const tableUrl = url + '/rest/v1/' + tableName;
 
-                /* Объект-запрос, который умеет накапливать методы (select, order и т.д.) */
+                /* Объект-конструктор для безопасного сбора цепочки методов (select, order) */
                 const requestBuilder = {
                     url: tableUrl,
-                    method: 'GET',
-                    body: null,
-                    headers: { ...headers },
+                    select: function() { return this; },
+                    order: function() { return this; },
                     
-                    select: function() {
-                        this.method = 'GET';
-                        return this;
-                    },
-                    order: function() {
-                        /* Метод order просто возвращает этот же объект, fetch заберет данные */
-                        return this;
-                    },
-                    /* Метод then превращает объект в аналог Promise, чтобы работал await */
+                    /* Метод then перехватывает await и делает реальный GET запрос */
                     then: async function(onFulfilled) {
                         try {
-                            const res = await fetch(this.url, {
-                                method: this.method,
-                                headers: this.headers,
-                                body: this.body
+                            const res = await fetch(this.url + '?select=*', {
+                                method: 'GET',
+                                headers: {
+                                    'apikey': key,
+                                    'Authorization': 'Bearer ' + key
+                                }
                             });
                             if (!res.ok) throw new Error('HTTP ' + res.status);
                             const data = await res.json();
@@ -52,7 +38,12 @@ window.supabase = {
                         try {
                             const res = await fetch(tableUrl, {
                                 method: 'POST',
-                                headers: headers,
+                                headers: {
+                                    'apikey': key,
+                                    'Authorization': 'Bearer ' + key,
+                                    'Content-Type': 'application/json',
+                                    'Prefer': 'return=representation'
+                                },
                                 body: JSON.stringify(rows)
                             });
                             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -67,7 +58,11 @@ window.supabase = {
                                 try {
                                     const res = await fetch(tableUrl + '?' + column + '=eq.' + encodeURIComponent(value), {
                                         method: 'PATCH',
-                                        headers: headers,
+                                        headers: {
+                                            'apikey': key,
+                                            'Authorization': 'Bearer ' + key,
+                                            'Content-Type': 'application/json'
+                                        },
                                         body: JSON.stringify(values)
                                     });
                                     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -84,7 +79,10 @@ window.supabase = {
                                 try {
                                     const res = await fetch(tableUrl + '?' + column + '=eq.' + encodeURIComponent(value), {
                                         method: 'DELETE',
-                                        headers: headers
+                                        headers: {
+                                            'apikey': key,
+                                            'Authorization': 'Bearer ' + key
+                                        }
                                     });
                                     if (!res.ok) throw new Error('HTTP ' + res.status);
                                     return { error: null };
