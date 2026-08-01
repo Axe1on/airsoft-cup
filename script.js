@@ -2,7 +2,7 @@
 const SUPABASE_URL = 'https://kecoxatolgxsxpqhtvgk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7icoBzwIZQ8p-IdnituWMg_2xbKz5ly';
 
-/* ИСПРАВЛЕНО: Правильная инициализация клиента библиотеки */
+/* Инициализация клиента библиотеки */
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 /* Локальные копии данных для мгновенного рендера интерфейса */
@@ -17,7 +17,7 @@ let currentSelectedRolePlayerIndex = null;
 let isAdmin = JSON.parse(localStorage.getItem('str_is_admin')) || false;
 let openRosters = [];
 
-/* Сохранение только сессии админа (остальное теперь хранится в облаке PostgreSQL) */
+/* Сохранение только сессии админа */
 function saveSession() {
     localStorage.setItem('str_is_admin', JSON.stringify(isAdmin));
 }
