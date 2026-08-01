@@ -69,7 +69,6 @@
             </div>
         </div>
         
-        <!-- ИСПРАВЛЕНО: Кнопка "Записать игру" теперь показывается только админу -->
         <button onclick="recordMatch()" class="save-match-btn admin-only">Записать игру</button>
         
         <h2 class="history-title">История игр</h2>
@@ -80,7 +79,7 @@
     <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ АДМИНИСТРАТОРА -->
     <div id="authModal" class="modal">
         <div class="modal-content">
-            <h3>Вход в伴ель админа</h3>
+            <h3>Вход в панель админа</h3>
             <div class="form-group">
                 <input type="text" id="authLogin" placeholder="Логин">
                 <input type="password" id="authPassword" placeholder="Пароль">
@@ -159,6 +158,8 @@
         </div>
     </div>
 
+    <!-- ПОДКЛЮЧАЕМ ОБЛАЧНЫЙ БЭКЕНД SUPABASE -->
+    <script src="https://jsdelivr.net"></script>
     <script src="script.js"></script>
 </body>
 </html>
