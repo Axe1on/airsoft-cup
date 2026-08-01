@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Страйкбол: Турнирный Менеджер</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ АВТОРИЗАЦИИ -->
+    <div class="top-admin-bar">
+        <span id="adminStatusText">Режим: Зритель</span>
+        <button id="authBtn" onclick="handleAuthClick()">Админ</button>
+    </div>
+
+    <h1>Страйкбол: Система учета турниров</h1>
+    
+    <div class="container">
+        <!-- УПРАВЛЕНИЕ КОМАНДАМИ -->
+        <div class="section">
+            <h2>Команды и Рейтинг</h2>
+            <div class="form-group admin-only">
+                <input type="text" id="teamName" placeholder="Название команды">
+                <button onclick="addTeam()">Добавить команду</button>
+            </div>
+            
+            <div class="stats-header">
+                <span class="hdr-rank">№</span>
+                <span class="hdr-team">Команда</span>
+                <span class="hdr-stats">В-Н-П</span>
+                <span class="hdr-score">Очки</span>
+                <span class="hdr-action admin-only-cell"></span>
+            </div>
+            <ul id="teamsList"></ul>
+        </div>
+
+        <!-- УПРАВЛЕНИЕ ИГРОКАМИ -->
+        <div class="section">
+            <h2>Игроки и Роли</h2>
+            <div class="form-group admin-only">
+                <input type="text" id="playerName" placeholder="Имя нового игрока">
+                <button onclick="addPlayer()">Добавить игрока</button>
+            </div>
+            <ul id="playersList"></ul>
+        </div>
+    </div>
+
+    <!-- ИГРЫ КОМАНД -->
+    <div class="full-section">
+        <h2 id="matchSectionTitle">Результаты матчей</h2>
+        <p class="info-text">Калькулятор: Победа = 2 очка, Ничья = 1 очко, Поражение = 0 очков.</p>
+        
+        <div class="match-scoreboard-row admin-only-flex">
+            <div class="scoreboard-team left-side">
+                <div class="team-logo-box" id="logo-match-1">★</div>
+                <select id="matchTeam1" onchange="updateMatchLogos()"></select>
+            </div>
+            
+            <div class="scoreboard-score-block">
+                <input type="number" id="score1" class="score-input" placeholder="0" min="0">
+                <span class="vs-label">вс</span>
+                <input type="number" id="score2" class="score-input" placeholder="0" min="0">
+            </div>
+            
+            <div class="scoreboard-team right-side">
+                <select id="matchTeam2" onchange="updateMatchLogos()"></select>
+                <div class="team-logo-box" id="logo-match-2">★</div>
+            </div>
+        </div>
+        
+        <button onclick="recordMatch()" class="save-match-btn">Записать игру</button>
+        
+        <h2 class="history-title">История игр</h2>
+        <ul id="historyList"></ul>
+        <button onclick="clearHistory()" class="clear-btn admin-only">Очистить историю игр</button>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ АДМИНИСТРАТОРА -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <h3>Вход в панель админа</h3>
+            <div class="form-group">
+                <input type="text" id="authLogin" placeholder="Логин">
+                <input type="password" id="authPassword" placeholder="Пароль">
+                <button onclick="submitLogin()" style="margin-top: 10px;">Войти</button>
+            </div>
+            <button onclick="closeAuthModal()" class="close-modal-btn">Отмена</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ЛОГОТИПОВ КОМАНД -->
+    <div id="logoModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalTeamName">Управление логотипом</h3>
+            <div id="modalAddArea">
+                <input type="text" id="newLogoUrl" placeholder="Вставьте ссылку на картинку или имя файла">
+                <button onclick="saveModalLogo()">Добавить логотип</button>
+            </div>
+            <div id="modalEditArea" style="display: none;">
+                <input type="text" id="editLogoUrl" placeholder="Новая ссылка на картинку">
+                <div class="modal-btn-row">
+                    <button onclick="saveModalLogo()" style="background: #d97706;">Изменить</button>
+                    <button onclick="deleteModalLogo()" style="background: #991b1b; color: white;">Удалить логотип</button>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="close-modal-btn">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ СТАТИСТИКИ ИГРОКОВ -->
+    <div id="playerStatsModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalPlayerName">Статистика бойца</h3>
+            
+            <div class="stat-control-row">
+                <span>Убийства (K):</span>
+                <input type="number" id="input-kills" min="0" style="width: 80px; text-align: center; margin: 0;">
+            </div>
+            
+            <div class="stat-control-row">
+                <span>Смерти (D):</span>
+                <input type="number" id="input-deaths" min="0" style="width: 80px; text-align: center; margin: 0;">
+            </div>
+            
+            <div class="stat-control-row">
+                <span>Воскрешения (Медик):</span>
+                <input type="number" id="input-revives" min="0" style="width: 80px; text-align: center; margin: 0;">
+            </div>
+            
+            <div class="stat-control-row">
+                <span>Подрывы (Инженер):</span>
+                <input type="number" id="input-bombs" min="0" style="width: 80px; text-align: center; margin: 0;">
+            </div>
+            
+            <div class="modal-btn-row" style="margin-top: 20px;">
+                <button id="modalStatSaveBtn" onclick="savePlayerStats()" style="background: #d97706;">Сохранить</button>
+                <button id="modalStatCancelBtn" onclick="closePlayerModal()" style="background: #4a5d52; color: #e2e8f0;">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ДЛЯ ВЫБОРА РОЛИ ИГРОКА -->
+    <div id="playerRoleModal" class="modal">
+        <div class="modal-content">
+            <h3 id="roleModalTitle">Выбор роли бойца</h3>
+            <p class="info-text">В одной команде может быть только один Командир, Медик и Инженер.</p>
+            <div class="form-group">
+                <select id="modalRoleSelect">
+                    <option value="Штурмовик">Штурмовик (Патроны)</option>
+                    <option value="Командир">Командир (Звезда)</option>
+                    <option value="Медик">Медик (Крест)</option>
+                    <option value="Инженер">Инженер (Ключ)</option>
+                </select>
+                <button onclick="savePlayerRole()" style="margin-top: 10px;">Сохранить роль</button>
+            </div>
+            <button onclick="closeRoleModal()" class="close-modal-btn">Отмена</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
