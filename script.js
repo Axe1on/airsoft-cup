@@ -1,5 +1,5 @@
 /* CONFIGURATION OF CONNECTION TO THE CLOUD DATABASE */
-const SUPABASE_URL = 'https://supabase.co';
+const SUPABASE_URL = 'https://kecoxatolgxsxpqhtvgk.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7icoBzwIZQ8p-IdnituWMg_2xbKz5ly';
 
 /* Инициализация клиента Supabase */
