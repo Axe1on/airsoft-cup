@@ -8,9 +8,10 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ АВТОРИЗАЦИИ -->
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ АВТОРИЗАЦИИ С КНОПКОЙ СЕТКИ ПО ЦЕНТРУ -->
     <div class="top-admin-bar">
         <span id="adminStatusText">Режим: Зритель</span>
+        <button onclick="window.open('bracket.html', '_blank')" style="width: auto; padding: 4px 12px; margin: 0; font-size: 11px; background: #556b2f; color: white; border: 1px solid #3f4e46;">📊 Турнирная Сетка</button>
         <button id="authBtn" onclick="handleAuthClick()">Админ</button>
     </div>
 
@@ -158,10 +159,6 @@
         </div>
     </div>
 
-            <!-- Подключаем наш автономный драйвер связи -->
-    <script src="supabase-connect.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-
-
