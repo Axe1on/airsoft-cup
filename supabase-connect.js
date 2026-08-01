@@ -2,31 +2,57 @@
 window.supabase = {
     createClient: function(url, key) {
         const headers = {
-            'apiKey': key,
+            'apikey': key,
             'Authorization': 'Bearer ' + key,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
         };
 
         return {
             from: function(tableName) {
                 const tableUrl = url + '/rest/v1/' + tableName;
 
-                return {
-                    select: async function() {
+                /* Объект-запрос, который умеет накапливать методы (select, order и т.д.) */
+                const requestBuilder = {
+                    url: tableUrl,
+                    method: 'GET',
+                    body: null,
+                    headers: { ...headers },
+                    
+                    select: function() {
+                        this.method = 'GET';
+                        return this;
+                    },
+                    order: function() {
+                        /* Метод order просто возвращает этот же объект, fetch заберет данные */
+                        return this;
+                    },
+                    /* Метод then превращает объект в аналог Promise, чтобы работал await */
+                    then: async function(onFulfilled) {
                         try {
-                            const res = await fetch(tableUrl + '?select=*', { method: 'GET', headers: headers });
+                            const res = await fetch(this.url, {
+                                method: this.method,
+                                headers: this.headers,
+                                body: this.body
+                            });
                             if (!res.ok) throw new Error('HTTP ' + res.status);
                             const data = await res.json();
-                            return { data: data, error: null };
+                            onFulfilled({ data: data, error: null });
                         } catch (err) {
-                            return { data: null, error: err };
+                            onFulfilled({ data: null, error: err });
                         }
+                    }
+                };
+
+                return {
+                    select: function() {
+                        return requestBuilder.select();
                     },
                     insert: async function(rows) {
                         try {
                             const res = await fetch(tableUrl, {
                                 method: 'POST',
-                                headers: { ...headers, 'Prefer': 'return=representation' },
+                                headers: headers,
                                 body: JSON.stringify(rows)
                             });
                             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -67,9 +93,6 @@ window.supabase = {
                                 }
                             }
                         };
-                    },
-                    order: function() {
-                        return this; /* Заглушка для сортировки, fetch забирает данные и так */
                     }
                 };
             }
