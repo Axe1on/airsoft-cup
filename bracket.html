@@ -24,7 +24,7 @@
             font-size: 24px;
             text-align: center;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1350px;
         }
         .info-text {
             font-size: 13px;
@@ -32,80 +32,34 @@
             margin-bottom: 20px;
             text-align: center;
         }
-        .main-layout {
+        .bracket-row-layout {
             display: flex;
             width: 100%;
-            max-width: 1300px;
-            gap: 30px;
+            max-width: 1350px;
+            gap: 20px;
             align-items: flex-start;
+            overflow-x: auto;
+            padding-bottom: 15px;
         }
-        .tournament-area {
-            flex: 3;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-        }
-        .podium-sidebar {
+        .stage-column {
             flex: 1;
-            background: #161c19;
-            border: 2px solid #d97706;
-            border-radius: 8px;
-            padding: 20px;
-            box-sizing: border-box;
-            position: sticky;
-            top: 60px;
+            min-width: 240px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-        .podium-title {
-            text-align: center;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #eccc68;
-            border-bottom: 1px dashed #4a5d52;
-            padding-bottom: 10px;
-            margin: 0;
-        }
-        .place-box {
-            display: flex;
-            flex-direction: column;
-            background: #2d3732;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #3f4e46;
-        }
-        .place-1 { border-color: #d97706; }
-        .place-1 .place-team { font-size: 22px; font-weight: bold; color: #fff; text-shadow: 0 0 10px rgba(217,119,6,0.3); }
-        .place-2 .place-team { font-size: 17px; font-weight: bold; color: #e2e8f0; }
-        .place-3 .place-team { font-size: 13px; font-weight: bold; color: #a3a3a3; }
-        .cup-icon { margin-right: 8px; font-size: 1.2em; vertical-align: middle; }
-        .place-lbl { font-size: 11px; text-transform: uppercase; color: #b3c0a4; margin-bottom: 4px; font-weight: bold; }
-
-        .groups-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        .group-container {
-            background: #232d28;
-            border: 1px solid #3f4e46;
-            border-radius: 6px;
-            padding: 15px;
+            gap: 15px;
         }
         .group-title {
             font-weight: bold;
             text-transform: uppercase;
             color: #b3c0a4;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             border-bottom: 1px solid #3f4e46;
-            padding-bottom: 4px;
-            font-size: 14px;
-        }
-        .tables-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            padding-bottom: 6px;
+            font-size: 13px;
+            text-align: center;
+            background: #1a221e;
+            padding: 6px;
+            border-radius: 4px;
         }
         .matchup-card {
             background: #2d3732;
@@ -121,13 +75,13 @@
             align-items: center;
             justify-content: space-between;
             gap: 10px;
+            min-height: 32px;
         }
         
         .viewer-text, .viewer-score-box { font-weight: bold; font-size: 14px; color: #e2e8f0; }
-        .viewer-score-box { background: #1a221e; padding: 2px 8px; border-radius: 4px; color: #eccc68; font-family: monospace; }
+        .viewer-score-box { background: #1a221e; padding: 2px 8px; border-radius: 4px; color: #eccc68; font-family: monospace; min-widh: 15px; text-align: center; }
         
         .admin-controls { display: none !important; }
-        
         body.is-admin .admin-controls { display: block !important; }
         body.is-admin .admin-controls.team-row { display: flex !important; }
         body.is-admin .viewer-text, body.is-admin .viewer-score-box { display: none !important; }
@@ -139,8 +93,8 @@
             background: #1a221e;
             color: #f1f2f6;
         }
-        select { flex: 1; font-weight: bold; }
-        input[type="number"] { width: 50px; text-align: center; font-weight: bold; border-color: #d97706; }
+        select { flex: 1; font-weight: bold; font-size: 13px; }
+        input[type="number"] { width: 48px; text-align: center; font-weight: bold; border-color: #d97706; }
         
         button.action-btn {
             background: #d97706;
@@ -148,258 +102,282 @@
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
-            font-size: 11px;
+            font-size: 10px;
             width: 100%;
             border: none;
             padding: 8px;
-            margin-top: 4px;
+            margin-top: 2px;
         }
         button.action-btn:hover { background: #f59e0b; }
         
-        .clear-btn {
-            background: #991b1b;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            font-weight: bold;
-            cursor: pointer;
+        .bottom-results-layout {
+            display: flex;
+            width: 100%;
+            max-width: 1350px;
+            gap: 30px;
+            margin-top: 25px;
+            border-top: 2px dashed #3f4e46;
+            padding-top: 25px;
+        }
+        .bottom-section {
+            flex: 1;
+            background: #161c19;
+            border: 1px solid #3f4e46;
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .podium-box-row { display: flex; gap: 15px; margin-top: 15px; }
+        .place-box { flex: 1; display: flex; flex-direction: column; background: #2d3732; padding: 12px; border-radius: 6px; border: 1px solid #3f4e46; }
+        .place-1 { border-color: #d97706; }
+        .place-1 .place-team { font-size: 20px; font-weight: bold; color: #fff; }
+        .place-2 .place-team { font-size: 16px; font-weight: bold; color: #e2e8f0; }
+        .place-3 .place-team { font-size: 13px; font-weight: bold; color: #a3a3a3; }
+        .cup-icon { margin-right: 6px; }
+        .place-lbl { font-size: 11px; text-transform: uppercase; color: #b3c0a4; margin-bottom: 4px; font-weight: bold; }
+
+        .cup-table-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #2d3732;
+            margin-bottom: 6px;
             border-radius: 4px;
-            text-transform: uppercase;
-            font-size: 11px;
+            border-left: 3px solid #d97706;
+            font-weight: bold;
+            font-size: 14px;
         }
+        .cup-table-list li span { color: #eccc68; }
+        .clear-btn { background: #991b1b; color: white; border: none; padding: 8px 15px; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; font-size: 11px; }
         .clear-btn:hover { background: #dc2626; }
-
-        .final-stage-container { display: flex; gap: 20px; }
-        .final-stage-container .round-box { flex: 1; }
-
-        @media screen and (max-width: 900px) {
-            .main-layout { flex-direction: column; }
-            .groups-grid { grid-template-columns: 1fr; }
-            .final-stage-container { flex-direction: column; }
-            .podium-sidebar { position: static; width: 100%; }
-        }
     </style>
 </head>
 <body>
 
     <h1>Tactical Tournament Board</h1>
-    <p class="info-text">Круговой этап кубка. Все введенные селекторы и счета мгновенно и надежно сохраняются в облачную базу данных.</p>
+    <p class="info-text">Сквозное онлайн-табло. Зрители видят только названия команд и итоговый счет матчей.</p>
     
-    <div style="width:100%; max-width:1300px; display:flex; justify-content: space-between; margin-bottom:15px;">
+    <div style="width:100%; max-width:1350px; display:flex; justify-content: space-between; margin-bottom:15px;">
         <button onclick="loadTournamentData()" style="background:#4a5d52; color:white; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; border-radius:4px;">🔄 Обновить данные</button>
         <button onclick="clearBracketTables()" class="clear-btn admin-controls">❌ Очистить таблицы кубка</button>
     </div>
 
-    <div class="main-layout">
-        <div class="tournament-area">
-            <!-- КРУГОВОЙ ЭТАП -->
-            <div class="groups-grid">
-                <!-- ТУР 1 -->
-                <div class="group-container">
-                    <div class="group-title">Группа A — Тур 1</div>
-                    <div class="tables-stack">
-                        <!-- Игра 1 -->
-                        <div class="matchup-card">
-                            <div class="team-row admin-controls">
-                                <select id="select-ga1-t1" onchange="saveSelectionToCloud('ga1', 1)"></select>
-                                <input type="number" id="score-ga1-t1" placeholder="0" onchange="saveSelectionToCloud('ga1', 1)">
-                            </div>
-                            <div class="team-row admin-controls">
-                                <select id="select-ga1-t2" onchange="saveSelectionToCloud('ga1', 2)"></select>
-                                <input type="number" id="score-ga1-t2" placeholder="0" onchange="saveSelectionToCloud('ga1', 2)">
-                            </div>
-                            <!-- Табло для зрителя -->
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-ga1-t1">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-ga1-t1">-</span>
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-ga1-t2">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-ga1-t2">-</span>
-                            </div>
-                            <button class="action-btn admin-controls" id="btn-ga1" onclick="executeMatch('ga1')">Сыграть матч</button>
-                        </div>
-                        <!-- Игра 2 -->
-                        <div class="matchup-card">
-                            <div class="team-row admin-controls">
-                                <select id="select-ga2-t1" onchange="saveSelectionToCloud('ga2', 1)"></select>
-                                <input type="number" id="score-ga2-t1" placeholder="0" onchange="saveSelectionToCloud('ga2', 1)">
-                            </div>
-                            <div class="team-row admin-controls">
-                                <select id="select-ga2-t2" onchange="saveSelectionToCloud('ga2', 2)"></select>
-                                <input type="number" id="score-ga2-t2" placeholder="0" onchange="saveSelectionToCloud('ga2', 2)">
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-ga2-t1">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-ga2-t1">-</span>
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-ga2-t2">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-ga2-t2">-</span>
-                            </div>
-                            <button class="action-btn admin-controls" id="btn-ga2" onclick="executeMatch('ga2')">Сыграть матч</button>
-                        </div>
-                    </div>
+    <div class="bracket-row-layout">
+        <!-- СТОЛБЕЦ 1: ТУР 1 -->
+        <div class="stage-column">
+            <div class="group-title">Группа A — Тур 1</div>
+            <!-- Игра 1 -->
+            <div class="matchup-card">
+                <div class="team-row admin-controls">
+                    <select id="select-ga1-t1" onchange="saveSelectionToCloud('ga1', 1)"></select>
+                    <input type="number" id="score-ga1-t1" placeholder="0" onchange="saveSelectionToCloud('ga1', 1)">
                 </div>
-
-                <!-- ТУР 2 -->
-                <div class="group-container">
-                    <div class="group-title">Группа A — Тур 2</div>
-                    <div class="tables-stack">
-                        <!-- Игра 3 -->
-                        <div class="matchup-card">
-                            <div class="team-row admin-controls">
-                                <select id="select-gb1-t1" onchange="saveSelectionToCloud('gb1', 1)"></select>
-                                <input type="number" id="score-gb1-t1" placeholder="0" onchange="saveSelectionToCloud('gb1', 1)">
-                            </div>
-                            <div class="team-row admin-controls">
-                                <select id="select-gb1-t2" onchange="saveSelectionToCloud('gb1', 2)"></select>
-                                <input type="number" id="score-gb1-t2" placeholder="0" onchange="saveSelectionToCloud('gb1', 2)">
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gb1-t1">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gb1-t1">-</span>
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gb1-t2">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gb1-t2">-</span>
-                            </div>
-                            <button class="action-btn admin-controls" id="btn-gb1" onclick="executeMatch('gb1')">Сыграть матч</button>
-                        </div>
-                        <!-- Игра 4 -->
-                        <div class="matchup-card">
-                            <div class="team-row admin-controls">
-                                <select id="select-gb2-t1" onchange="saveSelectionToCloud('gb2', 1)"></select>
-                                <input type="number" id="score-gb2-t1" placeholder="0" onchange="saveSelectionToCloud('gb2', 1)">
-                            </div>
-                            <div class="team-row admin-controls">
-                                <select id="select-gb2-t2" onchange="saveSelectionToCloud('gb2', 2)"></select>
-                                <input type="number" id="score-gb2-t2" placeholder="0" onchange="saveSelectionToCloud('gb2', 2)">
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gb2-t1">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gb2-t1">-</span>
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gb2-t2">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gb2-t2">-</span>
-                            </div>
-                            <button class="action-btn admin-controls" id="btn-gb2" onclick="executeMatch('gb2')">Сыграть матч</button>
-                        </div>
-                    </div>
+                <div class="team-row admin-controls">
+                    <select id="select-ga1-t2" onchange="saveSelectionToCloud('ga1', 2)"></select>
+                    <input type="number" id="score-ga1-t2" placeholder="0" onchange="saveSelectionToCloud('ga1', 2)">
                 </div>
-
-                <!-- ТУР 3 -->
-                <div class="group-container" style="grid-column: span 2;">
-                    <div class="group-title">Группа A — Тур 3</div>
-                    <div class="tables-stack" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <!-- Игра 5 -->
-                        <div class="matchup-card">
-                            <div class="team-row admin-controls">
-                                <select id="select-gc1-t1" onchange="saveSelectionToCloud('gc1', 1)"></select>
-                                <input type="number" id="score-gc1-t1" placeholder="0" onchange="saveSelectionToCloud('gc1', 1)">
-                            </div>
-                            <div class="team-row admin-controls">
-                                <select id="select-gc1-t2" onchange="saveSelectionToCloud('gc1', 2)"></select>
-                                <input type="number" id="score-gc1-t2" placeholder="0" onchange="saveSelectionToCloud('gc1', 2)">
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gc1-t1">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gc1-t1">-</span>
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gc1-t2">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gc1-t2">-</span>
-                            </div>
-                            <button class="action-btn admin-controls" id="btn-gc1" onclick="executeMatch('gc1')">Сыграть матч</button>
-                        </div>
-                        <!-- Игра 6 -->
-                        <div class="matchup-card">
-                            <div class="team-row admin-controls">
-                                <select id="select-gc2-t1" onchange="saveSelectionToCloud('gc2', 1)"></select>
-                                <input type="number" id="score-gc2-t1" placeholder="0" onchange="saveSelectionToCloud('gc2', 1)">
-                            </div>
-                            <div class="team-row admin-controls">
-                                <select id="select-gc2-t2" onchange="saveSelectionToCloud('gc2', 2)"></select>
-                                <input type="number" id="score-gc2-t2" placeholder="0" onchange="saveSelectionToCloud('gc2', 2)">
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gc2-t1">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gc2-t1">-</span>
-                            </div>
-                            <div class="team-row">
-                                <span class="viewer-text" id="view-gc2-t2">Ожидание...</span>
-                                <span class="viewer-score-box" id="score-view-gc2-t2">-</span>
-                            </div>
-                            <button class="action-btn admin-controls" id="btn-gc2" onclick="executeMatch('gc2')">Сыграть матч</button>
-                        </div>
-            <!-- ФИНАЛЬНАЯ СТАДИЯ -->
-            <div class="final-stage-container" style="margin-top: 20px;">
-                <div class="round-box">
-                    <div class="group-title" style="color:#a3a3a3;">Матч за 3-е место (Бронза)</div>
-                    <div class="matchup-card" style="border-color:#4a5d52;">
-                        <div class="team-row admin-controls">
-                            <select id="select-m3-t1" onchange="saveSelectionToCloud('m3', 1)"></select>
-                            <input type="number" id="score-m3-t1" placeholder="0" onchange="saveSelectionToCloud('m3', 1)">
-                        </div>
-                        <div class="team-row admin-controls">
-                            <select id="select-m3-t2" onchange="saveSelectionToCloud('m3', 2)"></select>
-                            <input type="number" id="score-m3-t2" placeholder="0" onchange="saveSelectionToCloud('m3', 2)">
-                        </div>
-                        <div class="team-row">
-                            <span class="viewer-text" id="view-m3-t1">Ожидание...</span>
-                            <span class="viewer-score-box" id="score-view-m3-t1">-</span>
-                        </div>
-                        <div class="team-row">
-                            <span class="viewer-text" id="view-m3-t2">Ожидание...</span>
-                            <span class="viewer-score-box" id="score-view-m3-t2">-</span>
-                        </div>
-                        <button class="action-btn admin-controls" id="btn-m3" onclick="executeMatch('m3')">Сыграть матч</button>
-                    </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-ga1-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-ga1-t1">-</span>
                 </div>
-                <div class="round-box">
-                    <div class="group-title" style="color:#eccc68;">Гранд-Финал (Золото)</div>
-                    <div class="matchup-card" style="border-color:#d97706;">
-                        <div class="team-row admin-controls">
-                            <select id="select-gf-t1" onchange="saveSelectionToCloud('gf', 1)"></select>
-                            <input type="number" id="score-gf-t1" placeholder="0" onchange="saveSelectionToCloud('gf', 1)">
-                        </div>
-                        <div class="team-row admin-controls">
-                            <select id="select-gf-t2" onchange="saveSelectionToCloud('gf', 2)"></select>
-                            <input type="number" id="score-gf-t2" placeholder="0" onchange="saveSelectionToCloud('gf', 2)">
-                        </div>
-                        <div class="team-row">
-                            <span class="viewer-text" id="view-gf-t1">Ожидание...</span>
-                            <span class="viewer-score-box" id="score-view-gf-t1">-</span>
-                        </div>
-                        <div class="team-row">
-                            <span class="viewer-text" id="view-gf-t2">Ожидание...</span>
-                            <span class="viewer-score-box" id="score-view-gf-t2">-</span>
-                        </div>
-                        <button class="action-btn admin-controls" id="btn-gf" onclick="executeMatch('gf')">Сыграть матч</button>
-                    </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-ga1-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-ga1-t2">-</span>
                 </div>
+                <button class="action-btn admin-controls" id="btn-ga1" onclick="executeMatch('ga1')">Сыграть матч</button>
+            </div>
+            <!-- Игра 2 -->
+            <div class="matchup-card">
+                <div class="team-row admin-controls">
+                    <select id="select-ga2-t1" onchange="saveSelectionToCloud('ga2', 1)"></select>
+                    <input type="number" id="score-ga2-t1" placeholder="0" onchange="saveSelectionToCloud('ga2', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-ga2-t2" onchange="saveSelectionToCloud('ga2', 2)"></select>
+                    <input type="number" id="score-ga2-t2" placeholder="0" onchange="saveSelectionToCloud('ga2', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-ga2-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-ga2-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-ga2-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-ga2-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-ga2" onclick="executeMatch('ga2')">Сыграть матч</button>
             </div>
         </div>
 
-        <!-- СТОЛБИК СПРАВА -->
-        <div class="podium-sidebar">
+        <!-- СТОЛБЕЦ 2: ТУР 2 -->
+        <div class="stage-column">
+            <div class="group-title">Группа A — Тур 2</div>
+            <!-- Игра 3 -->
+            <div class="matchup-card">
+                <div class="team-row admin-controls">
+                    <select id="select-gb1-t1" onchange="saveSelectionToCloud('gb1', 1)"></select>
+                    <input type="number" id="score-gb1-t1" placeholder="0" onchange="saveSelectionToCloud('gb1', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-gb1-t2" onchange="saveSelectionToCloud('gb1', 2)"></select>
+                    <input type="number" id="score-gb1-t2" placeholder="0" onchange="saveSelectionToCloud('gb1', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gb1-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gb1-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gb1-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gb1-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-gb1" onclick="executeMatch('gb1')">Сыграть матч</button>
+            </div>
+            <!-- Игра 4 -->
+            <div class="matchup-card">
+                <div class="team-row admin-controls">
+                    <select id="select-gb2-t1" onchange="saveSelectionToCloud('gb2', 1)"></select>
+                    <input type="number" id="score-gb2-t1" placeholder="0" onchange="saveSelectionToCloud('gb2', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-gb2-t2" onchange="saveSelectionToCloud('gb2', 2)"></select>
+                    <input type="number" id="score-gb2-t2" placeholder="0" onchange="saveSelectionToCloud('gb2', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gb2-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gb2-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gb2-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gb2-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-gb2" onclick="executeMatch('gb2')">Сыграть матч</button>
+            </div>
+        </div>
+
+        <!-- СТОЛБЕЦ 3: ТУР 3 -->
+        <div class="stage-column">
+            <div class="group-title">Группа A — Тур 3</div>
+            <!-- Игра 5 -->
+            <div class="matchup-card">
+                <div class="team-row admin-controls">
+                    <select id="select-gc1-t1" onchange="saveSelectionToCloud('gc1', 1)"></select>
+                    <input type="number" id="score-gc1-t1" placeholder="0" onchange="saveSelectionToCloud('gc1', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-gc1-t2" onchange="saveSelectionToCloud('gc1', 2)"></select>
+                    <input type="number" id="score-gc1-t2" placeholder="0" onchange="saveSelectionToCloud('gc1', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gc1-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gc1-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gc1-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gc1-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-gc1" onclick="executeMatch('gc1')">Сыграть матч</button>
+            </div>
+            <!-- Игра 6 -->
+            <div class="matchup-card">
+                <div class="team-row admin-controls">
+                    <select id="select-gc2-t1" onchange="saveSelectionToCloud('gc2', 1)"></select>
+                    <input type="number" id="score-gc2-t1" placeholder="0" onchange="saveSelectionToCloud('gc2', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-gc2-t2" onchange="saveSelectionToCloud('gc2', 2)"></select>
+                    <input type="number" id="score-gc2-t2" placeholder="0" onchange="saveSelectionToCloud('gc2', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gc2-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gc2-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gc2-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gc2-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-gc2" onclick="executeMatch('gc2')">Сыграть матч</button>
+            </div>
+        </div>
+        <!-- СТОЛБЕЦ 4: МАТЧ ЗА 3 МЕСТО -->
+        <div class="stage-column" style="margin-left: 20px;">
+            <div class="group-title" style="background: #3f4e46; color: #a3a3a3;">Игра за 3 место</div>
+            <div class="matchup-card" style="border-color: #4a5d52;">
+                <div class="team-row admin-controls">
+                    <select id="select-m3-t1" onchange="saveSelectionToCloud('m3', 1)"></select>
+                    <input type="number" id="score-m3-t1" placeholder="0" onchange="saveSelectionToCloud('m3', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-m3-t2" onchange="saveSelectionToCloud('m3', 2)"></select>
+                    <input type="number" id="score-m3-t2" placeholder="0" onchange="saveSelectionToCloud('m3', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-m3-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-m3-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-m3-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-m3-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-m3" onclick="executeMatch('m3')">Сыграть матч</button>
+            </div>
+        </div>
+
+        <!-- СТОЛБЕЦ 5: ГРАНД-ФИНАЛ -->
+        <div class="stage-column">
+            <div class="group-title" style="background: #d97706; color: #1e2522;">Гранд-Финал</div>
+            <div class="matchup-card" style="border-color: #d97706;">
+                <div class="team-row admin-controls">
+                    <select id="select-gf-t1" onchange="saveSelectionToCloud('gf', 1)"></select>
+                    <input type="number" id="score-gf-t1" placeholder="0" onchange="saveSelectionToCloud('gf', 1)">
+                </div>
+                <div class="team-row admin-controls">
+                    <select id="select-gf-t2" onchange="saveSelectionToCloud('gf', 2)"></select>
+                    <input type="number" id="score-gf-t2" placeholder="0" onchange="saveSelectionToCloud('gf', 2)">
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gf-t1">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gf-t1">-</span>
+                </div>
+                <div class="team-row">
+                    <span class="viewer-text" id="view-gf-t2">Ожидание...</span>
+                    <span class="viewer-score-box" id="score-view-gf-t2">-</span>
+                </div>
+                <button class="action-btn admin-controls" id="btn-gf" onclick="executeMatch('gf')">Сыграть матч</button>
+            </div>
+        </div>
+    </div> <!-- ИСПРАВЛЕНО: Закрываем .bracket-row-layout -->
+    <!-- Блок итогов и набранных очков перемещен вниз -->
+    <div class="bottom-results-layout">
+        
+        <!-- БЛОК 1: ТАБЛИЦА ТЕКУЩИХ ОЧКОВ КУБКА -->
+        <div class="bottom-section">
+            <h3 class="podium-title" style="color: #b3c0a4;">📊 Очки команд в группе</h3>
+            <p class="info-text" style="margin-bottom: 10px;">Очки считаются автоматически по ходу кругового этапа (Победа = 2 очка).</p>
+            <ul id="cupGroupLeaderboard" class="cup-table-list">
+                <li style="background:transparent; text-align:center; color:#a3a3a3; padding:10px;">Сыграйте матчи для расчета очков</li>
+            </ul>
+        </div>
+
+        <!-- БЛОК 2: ПЬЕДЕСТАЛ ПОЧЕТА -->
+        <div class="bottom-section" style="border-color: #d97706;">
             <h3 class="podium-title">🏆 Итоги кубка</h3>
-            <div class="place-box place-1">
-                <div class="place-lbl">1 Место</div>
-                <div class="place-team" id="podium-1"><span class="cup-icon">🥇</span>🏆 Ожидание...</div>
-            </div>
-            <div class="place-box place-2">
-                <div class="place-lbl">2 Место</div>
-                <div class="place-team" id="podium-2"><span class="cup-icon">🥈</span>🥈 Ожидание...</div>
-            </div>
-            <div class="place-box place-3">
-                <div class="place-lbl">3 Место</div>
-                <div class="place-team" id="podium-3"><span class="cup-icon">🥉</span>🥉 Ожидание...</div>
+            <div class="podium-box-row">
+                <div class="place-box place-1">
+                    <div class="place-lbl">1 Место</div>
+                    <div class="place-team" id="podium-1"><span class="cup-icon">🥇</span>🏆 Ожидание...</div>
+                </div>
+                <div class="place-box place-2">
+                    <div class="place-lbl">2 Место</div>
+                    <div class="place-team" id="podium-2"><span class="cup-icon">🥈</span>🥈 Ожидание...</div>
+                </div>
+                <div class="place-box place-3">
+                    <div class="place-lbl">3 Место</div>
+                    <div class="place-team" id="podium-3"><span class="cup-icon">🥉</span>🥉 Ожидание...</div>
+                </div>
             </div>
         </div>
+
     </div>
-    <!-- ПОДКЛЮЧЕНИЕ ОБЛАЧНОГО КЛИЕНТА И ЛОГИКИ СВЯЗИ -->
+        <!-- ПОДКЛЮЧЕНИЕ ОБЛАЧНОГО КЛИЕНТА И ЛОГИКИ СВЯЗИ -->
     <script src="https://unpkg.com"></script>
     <script src="supabase-connect.js"></script>
     <script>
@@ -418,25 +396,41 @@
             const selectEl = document.getElementById('select-' + matchId + '-t' + teamNum);
             const viewEl = document.getElementById('view-' + matchId + '-t' + teamNum);
             if (selectEl && viewEl) {
-                viewEl.innerText = selectEl.value || 'Ожидание...';
+                viewEl.innerText = selectEl.value.trim() || 'Ожидание...';
             }
         }
 
-        /* УДАЛЕНИЕ СЛУЖЕБНЫХ ДУБЛИКАТОВ ИЗ БАЗЫ ПРИ РЕДАКТИРОВАНИИ */
+        function renderCupLeaderboard() {
+            const lb = document.getElementById('cupGroupLeaderboard');
+            if (!lb) return;
+            
+            let sorted = Object.keys(cupScores).sort((a, b) => cupScores[b] - cupScores[a]);
+            if (sorted.length === 0) {
+                lb.innerHTML = '<li style="background:transparent; text-align:center; color:#a3a3a3; padding:10px;">Сыграйте матчи для расчета очков</li>';
+                return;
+            }
+            
+            lb.innerHTML = sorted.map((team, idx) => {
+                return '<li>' + (idx + 1) + '. ' + team + ' <span>' + cupScores[team] + ' очков</span></li>';
+            }).join('');
+        }
+
         async function removeOldCloudSelection(matchId) {
             await supabaseClient.from('cup_matches').delete().eq('match_id', matchId);
         }
 
-        /* МГНОВЕННОЕ СОХРАНЕНИЯ СОСТОЯНИЯ ТАБЛИЦЫ В ОБЛАКО ПРИ ИЗМЕНЕНИИ */
-        async function saveSelectionToCloud(matchId, teamNum) {
+        /* ИСПРАВЛЕНО: Теперь статус сыгранности (is_played) жестко передается параметром, а не берется из текста кнопки */
+        async function saveSelectionToCloud(matchId, teamNum, forcedPlayedStatus) {
             if (!isAdmin) return;
-            const t1 = document.getElementById('select-' + matchId + '-t1').value;
-            const t2 = document.getElementById('select-' + matchId + '-t2').value;
+            const t1 = document.getElementById('select-' + matchId + '-t1').value.trim();
+            const t2 = document.getElementById('select-' + matchId + '-t2').value.trim();
             const s1 = parseInt(document.getElementById('score-' + matchId + '-t1').value) || 0;
             const s2 = parseInt(document.getElementById('score-' + matchId + '-t2').value) || 0;
 
             syncViewerText(matchId, 1);
             syncViewerText(matchId, 2);
+
+            let isPlayedState = (forcedPlayedStatus !== undefined) ? forcedPlayedStatus : document.getElementById('btn-' + matchId).innerText.includes("сыгран");
 
             await removeOldCloudSelection(matchId);
             await supabaseClient.from('cup_matches').insert([{
@@ -445,7 +439,7 @@
                 team2: t2,
                 score1: s1,
                 score2: s2,
-                is_played: document.getElementById('btn-' + matchId).innerText.includes("сыгран")
+                is_played: isPlayedState
             }]);
         }
 
@@ -460,21 +454,17 @@
                     const s2 = document.getElementById('select-' + id + '-t2');
                     
                     if (s1 && s2) {
-                        const v1 = s1.value;
-                        const v2 = s2.value;
-
+                        const v1 = s1.value; const v2 = s2.value;
                         const optionsHTML = '<option value="">-- Команда --</option>' + 
                             allCloudTeams.map(t => '<option value="' + t.name + '">' + t.name + '</option>').join('');
                         
-                        s1.innerHTML = optionsHTML;
-                        s2.innerHTML = optionsHTML;
-
+                        s1.innerHTML = optionsHTML; s2.innerHTML = optionsHTML;
                         if (v1) s1.value = v1;
                         if (v2) s2.value = v2;
                     }
                 });
 
-                /* Подтягиваем ранее сохраненные состояния селекторов из новой таблицы cup_matches */
+                cupScores = {};
                 const { data: savedCupMatches } = await supabaseClient.from('cup_matches').select('*');
                 if (savedCupMatches) {
                     savedCupMatches.forEach(m => {
@@ -484,23 +474,36 @@
                         const sc2 = document.getElementById('score-' + m.match_id + '-t2');
                         const b = document.getElementById('btn-' + m.match_id);
 
-                        if (s1 && m.team1) s1.value = m.team1;
-                        if (s2 && m.team2) s2.value = m.team2;
-                        if (sc1 && m.score1) sc1.value = m.score1;
-                        if (sc2 && m.score2) sc2.value = m.score2;
+                        let t1Clean = m.team1 ? m.team1.trim() : "";
+                        let t2Clean = m.team2 ? m.team2.trim() : "";
+
+                        if (s1 && t1Clean) s1.value = t1Clean;
+                        if (s2 && t2Clean) s2.value = t2Clean;
+                        if (sc1 && m.score1 !== undefined) sc1.value = m.score1;
+                        if (sc2 && m.score2 !== undefined) sc2.value = m.score2;
                         
-                        if (b && m.is_played) {
-                            b.innerText = "Матч сыгран ✓";
-                            b.style.background = "#4a5d52";
-                            b.style.color = "#a3a3a3";
-                            
+                        if (t1Clean && !cupScores[t1Clean]) cupScores[t1Clean] = 0;
+                        if (t2Clean && !cupScores[t2Clean]) cupScores[t2Clean] = 0;
+
+                        if (t1Clean) document.getElementById('view-' + m.match_id + '-t1').innerText = t1Clean;
+                        if (t2Clean) document.getElementById('view-' + m.match_id + '-t2').innerText = t2Clean;
+                        
+                        /* ИСПРАВЛЕНО: Если в базе стоит флаг true, кнопка НАМЕРТВО блокируется при перезагрузке */
+                        if (m.is_played) {
                             document.getElementById('score-view-' + m.match_id + '-t1').innerText = m.score1;
                             document.getElementById('score-view-' + m.match_id + '-t2').innerText = m.score2;
+                            
+                            if (b) {
+                                b.innerText = "Матч сыгран ✓";
+                                b.style.background = "#4a5d52"; b.style.color = "#a3a3a3";
+                                b.setAttribute('disabled', 'true'); /* Полная блокировка кнопки клика */
+                            }
 
-                            let winTeam = (m.score1 > m.score2) ? m.team1 : m.team2;
-                            if (!cupScores[m.team1]) cupScores[m.team1] = 0;
-                            if (!cupScores[m.team2]) cupScores[m.team2] = 0;
-                            cupScores[winTeam] += 2;
+                            let winTeam = (m.score1 > m.score2) ? t1Clean : t2Clean;
+                            if (winTeam) cupScores[winTeam] += 2;
+                        } else {
+                            document.getElementById('score-view-' + m.match_id + '-t1').innerText = "-";
+                            document.getElementById('score-view-' + m.match_id + '-t2').innerText = "-";
                         }
                     });
                 }
@@ -510,16 +513,18 @@
                     syncViewerText(id, 2);
                 });
 
+                renderCupLeaderboard();
+
                 let gfData = savedCupMatches ? savedCupMatches.find(m => m.match_id === 'gf' && m.is_played) : null;
                 let m3Data = savedCupMatches ? savedCupMatches.find(m => m.match_id === 'm3' && m.is_played) : null;
                 if (gfData) {
-                    let w = (gfData.score1 > gfData.score2) ? gfData.team1 : gfData.team2;
-                    let l = (gfData.score1 > gfData.score2) ? gfData.team2 : gfData.team1;
+                    let w = (gfData.score1 > gfData.score2) ? gfData.team1.trim() : gfData.team2.trim();
+                    let l = (gfData.score1 > gfData.score2) ? gfData.team2.trim() : gfData.team1.trim();
                     document.getElementById('podium-1').innerHTML = '<span class="cup-icon">🥇</span> <b style="color:#fff; font-size:24px;">🏆 ' + w + '</b>';
                     document.getElementById('podium-2').innerHTML = '<span class="cup-icon">🥈</span> <b style="font-size:18px;">' + l + '</b>';
                 }
                 if (m3Data) {
-                    let w = (m3Data.score1 > m3Data.score2) ? m3Data.team1 : m3Data.team2;
+                    let w = (m3Data.score1 > m3Data.score2) ? m3Data.team1.trim() : m3Data.team2.trim();
                     document.getElementById('podium-3').innerHTML = '<span class="cup-icon">🥉</span> <b>' + w + '</b>';
                 }
 
@@ -528,8 +533,8 @@
             }
         }
         async function executeMatch(id) {
-            const t1 = document.getElementById('select-' + id + '-t1').value;
-            const t2 = document.getElementById('select-' + id + '-t2').value;
+            const t1 = document.getElementById('select-' + id + '-t1').value.trim();
+            const t2 = document.getElementById('select-' + id + '-t2').value.trim();
             const s1 = parseInt(document.getElementById('score-' + id + '-t1').value);
             const s2 = parseInt(document.getElementById('score-' + id + '-t2').value);
 
@@ -549,12 +554,13 @@
             if (!cupScores[t2]) cupScores[t2] = 0;
             cupScores[winner] += 2;
 
+            /* Мгновенно выводим счет на табло зрителя */
             document.getElementById('score-view-' + id + '-t1').innerText = s1;
             document.getElementById('score-view-' + id + '-t2').innerText = s2;
 
             if (isAdmin) {
-                let dbT1 = allCloudTeams.find(t => t.name === t1);
-                let dbT2 = allCloudTeams.find(t => t.name === t2);
+                let dbT1 = allCloudTeams.find(t => t.name.trim() === t1);
+                let dbT2 = allCloudTeams.find(t => t.name.trim() === t2);
                 if (dbT1 && dbT2) {
                     let pts1 = dbT1.points + (s1 > s2 ? 2 : 0), w1 = dbT1.wins + (s1 > s2 ? 1 : 0), l1 = dbT1.losses + (s1 > s2 ? 0 : 1);
                     let pts2 = dbT2.points + (s2 > s1 ? 2 : 0), w2 = dbT2.wins + (s2 > s1 ? 1 : 0), l2 = dbT2.losses + (s2 > s1 ? 0 : 1);
@@ -568,34 +574,37 @@
                 }
             }
 
-            document.getElementById('btn-' + id).innerText = "Матч сыгран ✓";
-            document.getElementById('btn-' + id).style.background = "#4a5d52";
-            document.getElementById('btn-' + id).style.color = "#a3a3a3";
+            /* ЖЕСТКАЯ БЛОКИРОВКА КНОПКИ В ИНТЕРФЕЙСЕ */
+            const b = document.getElementById('btn-' + id);
+            if (b) {
+                b.innerText = "Матч сыгран ✓";
+                b.style.background = "#4a5d52"; 
+                b.style.color = "#a3a3a3";
+                b.setAttribute('disabled', 'true'); /* Полное отключение кликов */
+            }
 
-            /* Записываем статус блокировки и счета в облако */
-            await saveSelectionToCloud(id, 1);
+            /* ИСПРАВЛЕНО: Принудительно передаем true в облако для фиксации состояния */
+            await saveSelectionToCloud(id, 1, true);
+            renderCupLeaderboard();
 
             const roundMatchIds = ['ga1', 'ga2', 'gb1', 'gb2', 'gc1', 'gc2'];
-            let roundFinishedCount = roundMatchIds.filter(mid => document.getElementById('btn-' + mid).innerText.includes("сыгран")).length;
+            /* Считаем сыгранные матчи по реальным заблокированным кнопкам */
+            let roundFinishedCount = roundMatchIds.filter(mid => document.getElementById('btn-' + mid).hasAttribute('disabled')).length;
 
-            /* ИСПРАВЛЕНО: Автоматическое распределение команд (1-2 место в Гранд-Финал, 3-4 место в матч за 3 место) */
             if (roundFinishedCount === 6 && id !== 'm3' && id !== 'gf') {
                 let sortedCupTeams = Object.keys(cupScores).sort((a, b) => cupScores[b] - cupScores[a]);
                 
                 if (sortedCupTeams.length >= 4) {
-                    /* Направляем 1 и 2 места в финал */
                     document.getElementById('select-gf-t1').value = sortedCupTeams[0]; syncViewerText('gf', 1);
                     document.getElementById('select-gf-t2').value = sortedCupTeams[1]; syncViewerText('gf', 2);
-                    
-                    /* Направляем 3 и 4 места в матч за 3 место */
                     document.getElementById('select-m3-t1').value = sortedCupTeams[2]; syncViewerText('m3', 1);
                     document.getElementById('select-m3-t2').value = sortedCupTeams[3]; syncViewerText('m3', 2);
                     
-                    /* Мгновенно фиксируем новые созданные пары финалистов в облако cup_matches */
-                    await saveSelectionToCloud('gf', 1);
-                    await saveSelectionToCloud('m3', 1);
+                    /* Фиксируем сгенерированные финалы в базе как еще не сыгранные (false) */
+                    await saveSelectionToCloud('gf', 1, false);
+                    await saveSelectionToCloud('m3', 1, false);
                     
-                    alert("Круговой этап завершен! Команды распределены: 1 и 2 места — в Финал, 3 и 4 места — в матч за 3-е место.");
+                    alert("Круговой этап завершен! Команды автоматически распределены по финалам на основе живых очков.");
                 }
             }
 
@@ -611,17 +620,17 @@
         }
 
         async function clearBracketTables() {
-            if (confirm("Вы уверены, что хотите полностью очистить табло кубка и стереть все данные из облачной таблицы кубка?")) {
+            if (confirm("Вы уверены, что хотите полностью очистить табло кубка и разблокировать все кнопки?")) {
                 cupScores = {};
-                /* Полностью сносим записи кубка из таблицы cup_matches в Supabase */
                 await supabaseClient.from('cup_matches').delete().neq('match_id', '');
 
                 allMatchIds.forEach(id => {
                     const b = document.getElementById('btn-' + id);
-                    if (b) {
-                        b.innerText = "Сыграть матч";
-                        b.style.background = "#d97706";
-                        b.style.color = "#1e2522";
+                    if (b) { 
+                        b.innerText = "Сыграть матч"; 
+                        b.style.background = "#d97706"; 
+                        b.style.color = "#1e2522"; 
+                        b.removeAttribute('disabled'); /* Полная разблокировка */
                     }
                     const sc1 = document.getElementById('score-' + id + '-t1');
                     const sc2 = document.getElementById('score-' + id + '-t2');
@@ -641,7 +650,7 @@
                 document.getElementById('podium-3').innerHTML = '<span class="cup-icon">🥉</span> Ожидание...';
 
                 await loadTournamentData();
-                alert("Таблицы кубка очищены и обнулены во всем облаке!");
+                alert("Таблицы кубка полностью очищены и разблокированы!");
             }
         }
 
