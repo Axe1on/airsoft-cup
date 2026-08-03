@@ -8,13 +8,25 @@ window.supabase = {
                 /* Объект-конструктор для безопасного сбора цепочки методов (select, order) */
                 const requestBuilder = {
                     url: tableUrl,
+                    // Запоминаем параметры, но возвращаем этот же объект для сохранения цепочки
                     select: function() { return this; },
-                    order: function() { return this; },
+                    order: function(column, options) { 
+                        // Добавляем поддержку сортировки в URL PostgREST API
+                        const direction = (options && options.ascending === false) ? 'desc' : 'asc';
+                        this.url += (this.url.includes('?') ? '&' : '?') + 'order=' + column + '.' + direction;
+                        return this; 
+                    },
                     
                     /* Метод then перехватывает await и делает реальный GET запрос */
                     then: async function(onFulfilled) {
                         try {
-                            const res = await fetch(this.url + '?select=*', {
+                            // Формируем чистый итоговый URL с учетом добавленных параметров сортировки
+                            let finalUrl = this.url;
+                            if (!finalUrl.includes('select=')) {
+                                finalUrl += (finalUrl.includes('?') ? '&' : '?') + 'select=*';
+                            }
+                            
+                            const res = await fetch(finalUrl, {
                                 method: 'GET',
                                 headers: {
                                     'apikey': key,
@@ -29,6 +41,7 @@ window.supabase = {
                         }
                     }
                 };
+
 
                 return {
                     select: function() {
