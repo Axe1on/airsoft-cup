@@ -53,14 +53,20 @@ async function executeCupMatch(id) {
  let active4Teams = [currentSlots.A, currentSlots.B, currentSlots.C, currentSlots.D].filter(Boolean);
  active4Teams.forEach(t => { if (cupScores[t] === undefined) cupScores[t] = 0; });
  let sortedCupTeams = active4Teams.sort((a, b) => cupScores[b] - cupScores[a]);
- if (sortedCupTeams.length >= 4) {
- document.getElementById('select-sf1-t1').value = sortedCupTeams; syncViewerText('sf1', 1);
- document.getElementById('select-sf1-t2').value = sortedCupTeams; syncViewerText('sf1', 2);
- document.getElementById('select-sf2-t1').value = sortedCupTeams; syncViewerText('sf2', 1);
- document.getElementById('select-sf2-t2').value = sortedCupTeams; syncViewerText('sf2', 2);
- await saveSelectionToCloud('sf1', 1, false); await saveSelectionToCloud('sf2', 1, false);
- alert("Отборочный тур завершен! Сформированы Полуфиналы:\nПФ 1: " + sortedCupTeams + " vs " + sortedCupTeams + "\nПФ 2: " + sortedCupTeams + " vs " + sortedCupTeams);
+  if (sortedCupTeams.length >= 4) {
+ // Четко распределяем команды по индексам массива (от 0 до 3)
+ document.getElementById('select-sf1-t1').value = sortedCupTeams[0]; syncViewerText('sf1', 1); // 1 место
+ document.getElementById('select-sf1-t2').value = sortedCupTeams[1]; syncViewerText('sf1', 2); // 2 место
+ 
+ document.getElementById('select-sf2-t1').value = sortedCupTeams[2]; syncViewerText('sf2', 1); // 3 место
+ document.getElementById('select-sf2-t2').value = sortedCupTeams[3]; syncViewerText('sf2', 2); // 4 место
+ 
+ await saveSelectionToCloud('sf1', 1, false); 
+ await saveSelectionToCloud('sf2', 1, false);
+ 
+ alert("Отборочный тур завершен! Сформированы Полуфиналы:\nПФ 1: " + sortedCupTeams[0] + " vs " + sortedCupTeams[1] + "\nПФ 2: " + sortedCupTeams[2] + " vs " + sortedCupTeams[3]);
  }
+
  }
  
  if (id === 'sf1' || id === 'sf2') {
