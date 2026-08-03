@@ -35,7 +35,6 @@ async function executeCupMatch(id) {
  const b = document.getElementById('btn-' + id);
  if (b) { b.innerText = "Матч сыгран "; b.style.background = "#4a5d52"; b.style.color = "#a3a3a3"; b.setAttribute('disabled', 'true'); }
  
- // МГНОВЕННЫЙ БЛОК: Защищаем поля ввода сразу после клика организатора
  const sc1 = document.getElementById('score-' + id + '-t1');
  const sc2 = document.getElementById('score-' + id + '-t2');
  const sel1 = document.getElementById('select-' + id + '-t1');
@@ -55,12 +54,12 @@ async function executeCupMatch(id) {
  active4Teams.forEach(t => { if (cupScores[t] === undefined) cupScores[t] = 0; });
  let sortedCupTeams = active4Teams.sort((a, b) => cupScores[b] - cupScores[a]);
  if (sortedCupTeams.length >= 4) {
- document.getElementById('select-sf1-t1').value = sortedCupTeams[0]; syncViewerText('sf1', 1);
- document.getElementById('select-sf1-t2').value = sortedCupTeams[3]; syncViewerText('sf1', 2);
- document.getElementById('select-sf2-t1').value = sortedCupTeams[1]; syncViewerText('sf2', 1);
- document.getElementById('select-sf2-t2').value = sortedCupTeams[2]; syncViewerText('sf2', 2);
+ document.getElementById('select-sf1-t1').value = sortedCupTeams; syncViewerText('sf1', 1);
+ document.getElementById('select-sf1-t2').value = sortedCupTeams; syncViewerText('sf1', 2);
+ document.getElementById('select-sf2-t1').value = sortedCupTeams; syncViewerText('sf2', 1);
+ document.getElementById('select-sf2-t2').value = sortedCupTeams; syncViewerText('sf2', 2);
  await saveSelectionToCloud('sf1', 1, false); await saveSelectionToCloud('sf2', 1, false);
- alert("Отборочный тур завершен! Сформированы Полуфиналы:\nПФ 1: " + sortedCupTeams[0] + " vs " + sortedCupTeams[3] + "\nПФ 2: " + sortedCupTeams[1] + " vs " + sortedCupTeams[2]);
+ alert("Отборочный тур завершен! Сформированы Полуфиналы:\nПФ 1: " + sortedCupTeams + " vs " + sortedCupTeams + "\nПФ 2: " + sortedCupTeams + " vs " + sortedCupTeams);
  }
  }
  
@@ -88,7 +87,6 @@ async function executeCupMatch(id) {
  }
  await loadTournamentData();
 }
-
 
 async function clearBracketTables() {
  if (confirm("Вы уверены, что хотите ПОЛНОСТЬЮ стереть результаты кубка?")) {

@@ -64,5 +64,15 @@ function renderUI() {
  updateMatchLogos();
 }
 
-/* СТАРТ ПРИЛОЖЕНИЯ */
-loadDataFromCloud();
+/* СТАРТОВАЯ ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ */
+async function initializeApp() {
+    // 1. Сначала загружаем все данные из облака Supabase
+    await loadDataFromCloud();
+    
+    // 2. После успешной загрузки данных принудительно открываем сохраненную вкладку
+    console.log(`Восстановление сессии: открываем вкладку ${activeTabId}`);
+    switchTab(activeTabId, null);
+}
+
+// Запускаем приложение через новую функцию инициализации
+initializeApp();

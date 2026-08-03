@@ -58,7 +58,7 @@ function submitLogin() {
  let p = document.getElementById('authPassword').value.trim();
  
  if (l === "airsoftcup" && p === "strikeball") {
- isAdmin = true;
+ isAdmin = true; /* ИСПРАВЛЕНО: убрали слово let/const перед isAdmin! */
  saveSession();
  updateAdminUI();
  closeAuthModal();
@@ -68,25 +68,40 @@ function submitLogin() {
  }
 }
 
-/* Переключение вкладок с живым таймером кубка */
+/* Переключение вкладок с сохранением состояния */
 function switchTab(tabId, menuElement) {
  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
  document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
  
- document.getElementById(tabId).classList.add('active');
- if (menuElement) menuElement.classList.add('active');
+ const targetTab = document.getElementById(tabId);
+ if (!targetTab) return;
  
- if (tournamentIntervalId) {
- clearInterval(tournamentIntervalId);
- tournamentIntervalId = null;
+ targetTab.classList.add('active');
+ 
+ // Если элемент меню передан — подсвечиваем его, иначе ищем его в DOM по tabId
+ if (menuElement) {
+     menuElement.classList.add('active');
+ } else {
+     const correspondingMenuBtn = document.querySelector(`button[onclick*="${tabId}"]`);
+     if (correspondingMenuBtn) correspondingMenuBtn.classList.add('active');
  }
  
+ // СОХРАНЯЕМ ТЕКУЩУЮ ВКЛАДКУ В ПАМЯТЬ БРАУЗЕРА
+ localStorage.setItem('str_active_tab', tabId);
+ activeTabId = tabId;
+ 
+ if (tournamentIntervalId) {
+     clearInterval(tournamentIntervalId);
+     tournamentIntervalId = null;
+ }
+ 
+ // Логика автообновления для вкладки турнира
  if (tabId === 'bracket-tab') {
- loadTournamentData(); 
- tournamentIntervalId = setInterval(async () => {
- console.log('Живое автообновление: запрашиваем сетку турнира...');
- await loadTournamentData();
- }, 30000);
+     loadTournamentData(); 
+     tournamentIntervalId = setInterval(async () => {
+         console.log('Живое автообновление: запрашиваем сетку турнира...');
+         await loadTournamentData();
+     }, 30000);
  }
 }
 

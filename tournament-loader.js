@@ -38,7 +38,6 @@ async function loadTournamentData() {
  const currentVal = el.value;
  el.innerHTML = '<option value="">-- Выбрать команду --</option>' + sortedTeams.map(t => '<option value="' + t.name + '">' + t.name + '</option>').join('');
  if (currentVal) el.value = currentVal;
- // Защита: зритель не может менять настройки слотов
  if (!isAdmin) el.setAttribute('disabled', 'true');
  else el.removeAttribute('disabled');
  }
@@ -53,13 +52,15 @@ async function loadTournamentData() {
  const sel1 = document.getElementById('select-' + id + '-t1');
  const sel2 = document.getElementById('select-' + id + '-t2');
  
- // Разблокируем для админа по умолчанию (если матч ещё не сыгран)
+ // Сбрасываем статус сыгранности перед новой проверкой
+ const card = b?.closest('.matchup-card');
+ if (card) card.classList.remove('match-played-status');
+ 
  if (sc1) sc1.removeAttribute('disabled');
  if (sc2) sc2.removeAttribute('disabled');
  if (sel1) sel1.removeAttribute('disabled');
  if (sel2) sel2.removeAttribute('disabled');
  
- // Защита: если зашёл зритель — выключаем абсолютно всё сразу
  if (!isAdmin) {
  if (sc1) { sc1.value = ""; sc1.setAttribute('disabled', 'true'); }
  if (sc2) { sc2.value = ""; sc2.setAttribute('disabled', 'true'); }
@@ -106,7 +107,10 @@ async function loadTournamentData() {
  document.getElementById('score-view-' + m.match_id + '-t2').innerText = m.score2;
  if (b) { b.innerText = "Матч сыгран "; b.style.background = "#4a5d52"; b.style.color = "#a3a3a3"; b.setAttribute('disabled', 'true'); }
  
- // ФИКС: Если матч сыгран, полностью блокируем ввод счёта и выбор команд даже для Админа!
+ // АКТИВИРУЕМ КЛАСС СКРЫТИЯ ДЛЯ СЫГРАННОЙ КАРТОЧКИМАТЧА
+ const card = b?.closest('.matchup-card');
+ if (card) card.classList.add('match-played-status');
+ 
  if (sc1) sc1.setAttribute('disabled', 'true');
  if (sc2) sc2.setAttribute('disabled', 'true');
  if (s1) s1.setAttribute('disabled', 'true');

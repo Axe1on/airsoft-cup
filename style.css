@@ -902,14 +902,14 @@ button.action-btn:disabled {
 /* ВЕРТИКАЛЬНЫЙ ПОРЯДОК МЕСТ НА ПЬЕДЕСТАЛЕ */
 .podium-box-row {
     display: flex;
-    flex-direction: column; /* Места теперь выстраиваются строго друг под другом */
+    flex-direction: column;
     gap: 12px;
     margin-top: 15px;
 }
 
 .place-box {
     display: flex;
-    align-items: center; /* Элементы стоят ровно на одной линии */
+    align-items: center;
     gap: 15px;
     background: #2d3732;
     padding: 14px 20px;
@@ -919,7 +919,7 @@ button.action-btn:disabled {
 }
 
 .place-box:hover {
-    transform: translateX(5px); /* Легкий тактический интерактивный сдвиг */
+    transform: translateX(5px);
 }
 
 /* ИЕРАРХИЯ СТИЛЕЙ ПО УБЫВАНИЮ */
@@ -928,7 +928,7 @@ button.action-btn:disabled {
     background: linear-gradient(90deg, #2d3732 0%, #3a473f 100%);
 }
 .place-1 .place-team, .place-1 #podium-1 { 
-    font-size: 24px; /* Самый крупный шрифт для победителя */
+    font-size: 24px;
     font-weight: 800; 
     color: #ffffff; 
 }
@@ -937,7 +937,7 @@ button.action-btn:disabled {
     border-color: #94a3b8;
 }
 .place-2 .place-team, .place-2 #podium-2 { 
-    font-size: 19px; /* Средний шрифт для второго места */
+    font-size: 19px;
     font-weight: 700; 
     color: #e2e8f0; 
 }
@@ -946,12 +946,12 @@ button.action-btn:disabled {
     border-color: #b45309;
 }
 .place-3 .place-team, .place-3 #podium-3 { 
-    font-size: 15px; /* Небольшой шрифт для третьего места */
+    font-size: 15px;
     font-weight: 600; 
     color: #cbd5e1; 
 }
 
-/* КРАСИВОЕ ЦВЕТОВОЕ ОФОРМЛЕНИЕ ТЕКСТА КУБКОВ */
+/* ЦВЕТОВЫЕ ЭФФЕКТЫ ДЛЯ КУБКОВ */
 .gold-text { color: #eccc68; text-shadow: 0 0 10px rgba(236,204,104,0.3); }
 .silver-text { color: #cbd5e1; text-shadow: 0 0 10px rgba(203,213,225,0.2); }
 .bronze-text { color: #f59e0b; }
@@ -967,7 +967,7 @@ button.action-btn:disabled {
     text-transform: uppercase; 
     color: #b3c0a4; 
     font-weight: bold; 
-    min-width: 80px; /* Чтобы названия мест "1 МЕСТО" не прыгали */
+    min-width: 80px;
 }
 
 
@@ -1094,4 +1094,91 @@ button.action-btn:disabled {
     .tournament-sidebar-panel {
         width: 100%;
     }
+}
+/* ==========================================================================
+   СКРЫТИЕ ЭЛЕМЕНТОВ УПРАВЛЕНИЯ ТУРНИРОМ ДЛЯ ЗРИТЕЛЕЙ
+   ========================================================================== */
+
+/* 1. Если зашел ЗРИТЕЛЬ (нет класса .is-admin на body) */
+body:not(.is-admin) .matchup-card select,
+body:not(.is-admin) .matchup-card input[type="number"],
+body:not(.is-admin) .matchup-card .action-btn {
+    display: none !important; /* Намертво скрываем выпадающие списки, инпуты счета и кнопки */
+}
+
+/* Показываем текстовые блоки команд для зрителя на всю ширину */
+body:not(.is-admin) .matchup-card .viewer-text {
+    display: block;
+    width: 100%;
+    padding: 6px 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #cbd5e1;
+}
+
+/* Стилизуем отображение счета для зрителя, чтобы он не прыгал */
+body:not(.is-admin) .matchup-card .viewer-score-box {
+    display: inline-block;
+    background: #1a221e;
+    padding: 4px 10px;
+    border-radius: 4px;
+    color: #eccc68;
+    font-family: monospace;
+    font-size: 15px;
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+/* 2. Скрываем метки "A:" и "B:" (класс .slot-lbl) для зрителя */
+body:not(.is-admin) .matchup-card .slot-lbl {
+    display: none !important;
+}
+
+/* Скрываем любые текстовые или пустые поля ввода, которые стоят рядом с этими метками */
+body:not(.is-admin) .matchup-card input {
+    display: none !important;
+}
+
+/* Оставляем видимыми только финальные блоки с результатами матчей */
+body:not(.is-admin) .matchup-card .viewer-text,
+body:not(.is-admin) .matchup-card .viewer-score-box {
+    display: inline-block !important;
+}
+
+/* Убираем лишние пустые отступы сверху карточки, которые оставались от скрытых полей */
+body:not(.is-admin) .matchup-card .team-row:has(.slot-lbl) {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+/* ==========================================================================
+   ЛОГИКА ДЛЯ АДМИНИСТРАТОРА ПОСЛЕ ЗАПИСИ МАТЧА (БЛОКИРОВКА ВМЕСТО СКРЫТИЯ)
+   ========================================================================== */
+
+/* У организатора элементы ОСТАЮТСЯ видимыми, убираем их скрытие */
+body.is-admin .matchup-card.match-played-status select,
+body.is-admin .matchup-card.match-played-status input[type="number"] {
+    display: block !important;
+    opacity: 0.6; /* Делаем поля визуально приглушенными */
+    cursor: not-allowed;
+}
+
+/* Кнопка "Записать матч" остается, но становится неактивной и серой */
+body.is-admin .matchup-card.match-played-status .action-btn {
+    display: block !important;
+    background: #4a5d52 !important;
+    color: #a3a3a3 !important;
+    cursor: not-allowed;
+    pointer-events: none; /* Запрещаем клики */
+}
+
+/* Технические судейские слоты A/B/C/D тоже оставляем видимыми для контроля */
+body.is-admin .matchup-card.match-played-status .team-row:has(.slot-lbl) {
+    display: flex !important;
+}
+
+/* Скрываем текстовые блоки зрителя, так как админ видит свои инпуты */
+body.is-admin .matchup-card.match-played-status .viewer-text,
+body.is-admin .matchup-card.match-played-status .viewer-score-box {
+    display: none !important;
 }
