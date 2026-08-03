@@ -1,10 +1,9 @@
 /* CONFIGURATION OF CONNECTION TO THE CLOUD DATABASE */
-const SUPABASE_URL = 'https://kecoxatolgxsxpqhtvgk.supabase.co';
+const SUPABASE_URL = 'https://supabase.co';
 const SUPABASE_KEY = 'sb_publishable_7icoBzwIZQ8p-IdnituWMg_2xbKz5ly';
 
 /* Инициализация клиента Supabase */
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
 
 /* Локальные копии данных для мгновенного рендера интерфейса */
 let teams = {};
@@ -56,12 +55,12 @@ async function loadDataFromCloud() {
 function updateAdminUI() {
     if (isAdmin) {
         document.body.classList.add('is-admin');
-        document.getElementById('adminStatusText').innerText = 'Режим: Организатор';
+        document.getElementById('adminStatusText').innerText = 'Организатор';
         document.getElementById('authBtn').innerText = 'Выйти';
         document.getElementById('matchSectionTitle').innerText = 'Внести результат матча';
     } else {
         document.body.classList.remove('is-admin');
-        document.getElementById('adminStatusText').innerText = 'Режим: Зритель';
+        document.getElementById('adminStatusText').innerText = 'Зритель';
         document.getElementById('authBtn').innerText = 'Админ';
         document.getElementById('matchSectionTitle').innerText = 'Результаты матчей';
     }
@@ -122,6 +121,14 @@ function toggleRoster(teamName) {
     renderUI();
 }
 
+/* Функция переключения вкладок левого меню */
+function switchTab(tabId, menuElement) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    if (menuElement) menuElement.classList.add('active');
+}
 function renderUI() {
     updateAdminUI();
 
@@ -222,7 +229,8 @@ function renderUI() {
                                      '<button class="delete-btn" onclick="deletePlayer(' + index + ')">X</button>';
             } else {
                 let teamLabelText = player.team === "NoTeam" ? "Свободный" : player.team;
-actionControlsHtml = '' + teamLabelText + '';}
+                actionControlsHtml = '' + teamLabelText + '';
+            }
             playersList.innerHTML += '<li>' +
                 '<div style="display: flex; align-items: center; gap: 10px;">' +
                 playerTeamLogoHtml +
@@ -238,9 +246,290 @@ actionControlsHtml = '' + teamLabelText + '';}
                 actionControlsHtml +
                 '</div>' +
                 '</li>';
-        })
-            ;
+        });
     }
+
     /* 3. Рендер истории матчей */
-    const historyList = document.getElementById('historyList'); if (historyList) { if (matches.length === 0) { historyList.innerHTML = 'Игр пока не было'; } else { historyList.innerHTML = matches.map(m => { let logo1Html = teams[m.t1] && teams[m.t1].img ? '' : '★'; let logo2Html = teams[m.t2] && teams[m.t2].img ? '' : '★'; let timeLabelHtml = m.time ? '' + m.time + '' : ''; return '' + '' + '' + logo1Html + ' ' + '' + m.t1 + ' ' + '(' + m.s1 + ') : (' + m.s2 + ') ' + '' + m.t2 + ' ' + '' + logo2Html + '' + '' + timeLabelHtml + ''; }).join(''); } }
-} function updateMatchLogos() { const t1 = document.getElementById('matchTeam1').value; const t2 = document.getElementById('matchTeam2').value; const log1 = document.getElementById('logo-match-1'); const log2 = document.getElementById('logo-match-2'); if (log1 && t1 && teams[t1]) log1.innerHTML = teams[t1].img ? '' : '★'; if (log2 && t2 && teams[t2]) log2.innerHTML = teams[t2].img ? '' : '★'; } function openPlayerModal(index) { currentSelectedModalPlayerIndex = index; const player = players[index]; document.getElementById('modalPlayerName').innerText = 'Боец: ' + player.name + ' (' + (player.role || 'Штурмовик') + ')'; let kInp = document.getElementById('input-kills'); let dInp = document.getElementById('input-deaths'); let rInp = document.getElementById('input-revives'); let bInp = document.getElementById('input-bombs'); kInp.value = player.kills || 0; dInp.value = player.deaths || 0; rInp.value = player.revives || 0; bInp.value = player.bombs || 0; if (isAdmin) { kInp.removeAttribute('disabled'); dInp.removeAttribute('disabled'); rInp.removeAttribute('disabled'); bInp.removeAttribute('disabled'); document.getElementById('modalStatSaveBtn').style.display = 'block'; document.getElementById('modalStatCancelBtn').innerText = 'Отмена'; } else { kInp.setAttribute('disabled', 'true'); dInp.setAttribute('disabled', 'true'); rInp.setAttribute('disabled', 'true'); bInp.setAttribute('disabled', 'true'); document.getElementById('modalStatSaveBtn').style.display = 'none'; document.getElementById('modalStatCancelBtn').innerText = 'Закрыть'; } document.getElementById('playerStatsModal').style.display = 'flex'; }/* ОБЛАЧНОЕ ИЗМЕНЕНИЕ СТАТИСТИКИ ИГРОКА */async function savePlayerStats() { if (!isAdmin || currentSelectedModalPlayerIndex === null) return; let player = players[currentSelectedModalPlayerIndex]; let k = parseInt(document.getElementById('input-kills').value); let d = parseInt(document.getElementById('input-deaths').value); let r = parseInt(document.getElementById('input-revives').value); let b = parseInt(document.getElementById('input-bombs').value); let kills = isNaN(k) || k < 0 ? 0 : k; let deaths = isNaN(d) || d < 0 ? 0 : d; let revives = isNaN(r) || r < 0 ? 0 : r; let bombs = isNaN(b) || b < 0 ? 0 : b; const { error } = await supabaseClient.from('players').update({ kills, deaths, revives, bombs }).eq('name', player.name); if (!error) { closePlayerModal(); await loadDataFromCloud(); } else { alert('Ошибка сохранения в облако: ' + error.message); } } function closePlayerModal() { document.getElementById('playerStatsModal').style.display = 'none'; currentSelectedModalPlayerIndex = null; } function openRoleModal(index) { if (!isAdmin) return; currentSelectedRolePlayerIndex = index; const player = players[index]; document.getElementById('roleModalTitle').innerText = 'Роль для бойца: ' + player.name; document.getElementById('modalRoleSelect').value = player.role || "Штурмовик"; document.getElementById('playerRoleModal').style.display = 'flex'; } function closeRoleModal() { document.getElementById('playerRoleModal').style.display = 'none'; currentSelectedRolePlayerIndex = null; }/* ОБЛАЧНОЕ ИЗМЕНЕНИЕ РОЛИ ИГРОКА */async function savePlayerRole() { if (!isAdmin || currentSelectedRolePlayerIndex === null) return; let player = players[currentSelectedRolePlayerIndex]; let selectedRole = document.getElementById('modalRoleSelect').value; if (player.team !== "NoTeam" && selectedRole !== "Штурмовик") { let duplicateExists = players.some((p, idx) => { return idx !== currentSelectedRolePlayerIndex && p.team === player.team && (p.role || "Штурмовик") === selectedRole; }); if (duplicateExists) { alert('Ошибка тактического лимита! В команде ' + player.team + ' уже есть один ' + selectedRole + '. Два специалиста одной роли недопустимы.'); return; } } const { error } = await supabaseClient.from('players').update({ role: selectedRole }).eq('name', player.name); if (!error) { closeRoleModal(); await loadDataFromCloud(); } } function openLogoModal(teamName) { if (!isAdmin) return; currentSelectedModalTeam = teamName; document.getElementById('modalTeamName').innerText = 'Логотип команды: ' + teamName; const teamData = teams[teamName]; if (teamData.img) { document.getElementById('modalAddArea').style.display = 'none'; document.getElementById('modalEditArea').style.display = 'block'; document.getElementById('editLogoUrl').value = teamData.img; } else { document.getElementById('modalAddArea').style.display = 'block'; document.getElementById('modalEditArea').style.display = 'none'; document.getElementById('newLogoUrl').value = ''; } document.getElementById('logoModal').style.display = 'flex'; } function closeModal() { document.getElementById('logoModal').style.display = 'none'; currentSelectedModalTeam = ""; }/* ОБЛАЧНОЕ ИЗМЕНЕНИЕ ЛОГОТИПА КОМАНДЫ */async function saveModalLogo() { if (!isAdmin || !currentSelectedModalTeam) return; const teamData = teams[currentSelectedModalTeam]; let url = teamData.img ? document.getElementById('editLogoUrl').value.trim() : document.getElementById('newLogoUrl').value.trim(); if (url) { const { error } = await supabaseClient.from('teams').update({ img: url }).eq('name', currentSelectedModalTeam); if (!error) { closeModal(); await loadDataFromCloud(); } } else { alert("Пожалуйста, введите ссылку!"); } } async function deleteModalLogo() { if (!isAdmin || !currentSelectedModalTeam) return; if (confirm("Удалить логотип этой команды?")) { const { error } = await supabaseClient.from('teams').update({ img: "" }).eq('name', currentSelectedModalTeam); if (!error) { closeModal(); await loadDataFromCloud(); } } }/* ОБЛАЧНОЕ ДОБАВЛЕНИЕ КОМАНДЫ */async function addTeam() { if (!isAdmin) return; const name = document.getElementById('teamName').value.trim(); if (!name) return; let teamExists = Object.keys(teams).some(t => t.toLowerCase() === name.toLowerCase()); if (teamExists) { alert('Ошибка! Команда с названием ' + name + ' уже зарегистрирована в турнирной системе.'); return; } const { error } = await supabaseClient.from('teams').insert([{ name }]); if (!error) { document.getElementById('teamName').value = ''; await loadDataFromCloud(); } }/* ОБЛАЧНОЕ УДАЛЕНИЕ КОМАНДЫ */async function deleteTeam(teamName) { if (!isAdmin) return; if (confirm('Удалить команду ' + teamName + '?')) { await supabaseClient.from('players').update({ team: "NoTeam" }).eq('team', teamName); await supabaseClient.from('teams').delete().eq('name', teamName); await loadDataFromCloud(); } }/* ОБЛАЧНОЕ ДОБАВЛЕНИЕ ИГРОКА */async function addPlayer() { if (!isAdmin) return; const name = document.getElementById('playerName').value.trim(); if (!name) return; let playerExists = players.some(p => p.name.toLowerCase() === name.toLowerCase()); if (playerExists) { alert('Ошибка! Игрок с именем ' + name + ' уже зарегистрирован в турнирной системе.'); return; } const { error } = await supabaseClient.from('players').insert([{ name, team: 'NoTeam', role: 'Штурмовик' }]); if (!error) { document.getElementById('playerName').value = ''; await loadDataFromCloud(); } }/* ОБЛАЧНОЕ УДАЛЕНИЕ ИГРОКА */async function deletePlayer(index) { if (!isAdmin) return; let player = players[index]; if (confirm('Удалить игрока ' + player.name + '?')) { await supabaseClient.from('players').delete().eq('id', player.id); await loadDataFromCloud(); } }/* ОБЛАЧНАЯ ТРАНСФЕРИЗАЦИЯ ИГРОКА В ДРУГУЮ КОМАНДУ */async function changePlayerTeam(playerIndex, newTeam) { if (!isAdmin) return; let player = players[playerIndex]; let pRole = player.role || "Штурмовик"; if (newTeam !== "NoTeam" && pRole !== "Штурмовик") { let duplicateExists = players.some((p, idx) => { return idx !== playerIndex && p.team === newTeam && (p.role || "Штурмовик") === pRole; }); if (duplicateExists) { alert('Ошибка лимита! В команде ' + newTeam + ' уже зарегистрирован один ' + pRole + '. Сначала смените роль бойцу.'); document.getElementById('select-p-' + playerIndex).value = player.team; return; } } const { error } = await supabaseClient.from('players').update({ team: newTeam }).eq('id', player.id); if (!error) { await loadDataFromCloud(); } }/* ОБЛАЧНАЯ ЗАПИСЬ РЕЗУЛЬТАТА МАТЧА */async function recordMatch() { if (!isAdmin) return; const t1 = document.getElementById('matchTeam1').value; const t2 = document.getElementById('matchTeam2').value; const s1 = parseInt(document.getElementById('score1').value); const s2 = parseInt(document.getElementById('score2').value); if (!t1 || !t2 || t1 === t2 || isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) { alert("Проверьте правильность заполнения команд и счета!"); return; } let t1_pts = teams[t1].points, t1_w = teams[t1].wins, t1_d = teams[t1].draws, t1_l = teams[t1].losses; let t2_pts = teams[t2].points, t2_w = teams[t2].wins, t2_d = teams[t2].draws, t2_l = teams[t2].losses; if (s1 > s2) { t1_pts += 2; t1_w += 1; t2_l += 1; } else if (s2 > s1) { t2_pts += 2; t2_w += 1; t2_l += 1; } else { t1_pts += 1; t2_pts += 1; t1_d += 1; t2_d += 1; } let d = new Date(); let timeString = String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear() + ' в ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); await supabaseClient.from('matches').insert([{ t1: t1, s1: s1, t2: t2, s2: s2, time: timeString }]); await supabaseClient.from('teams').update({ points: t1_pts, wins: t1_w, draws: t1_d, losses: t1_l }).eq('name', t1); await supabaseClient.from('teams').update({ points: t2_pts, wins: t2_w, draws: t2_d, losses: t2_l }).eq('name', t2); document.getElementById('score1').value = ''; document.getElementById('score2').value = ''; await loadDataFromCloud(); }/* ОБЛАЧНЫЙ СБРОС ТУРНИРА */async function clearHistory() { if (!isAdmin) return; if (confirm("Очистить историю матчей и обнулить очки у всех команд?")) { await supabaseClient.from('matches').delete().neq('time', ''); const sortedTeams = Object.keys(teams).filter(t => !teams[t].initial); for (let team of sortedTeams) { await supabaseClient.from('teams').update({ points: 0, wins: 0, draws: 0, losses: 0 }).eq('name', team); } await loadDataFromCloud(); } }/* Стартовая загрузка при открытии сайта */loadDataFromCloud();
+    const historyList = document.getElementById('historyList'); 
+    if (historyList) { 
+        if (matches.length === 0) { 
+            historyList.innerHTML = 'Игр пока не было'; 
+        } else { 
+            historyList.innerHTML = matches.map(m => { 
+                let logo1Html = teams[m.t1] && teams[m.t1].img ? '<img src="' + teams[m.t1].img + '" class="history-mini-logo">' : '★'; 
+                let logo2Html = teams[m.t2] && teams[m.t2].img ? '<img src="' + teams[m.t2].img + '" class="history-mini-logo">' : '★'; 
+                let timeLabelHtml = m.time ? '<span class="history-time-badge">' + m.time + '</span>' : ''; 
+                return '<div class="history-row-item">' +
+                       '<div class="history-match-data">' + logo1Html + ' <b>' + m.t1 + '</b> <span class="score-badge">' + m.s1 + ' : ' + m.s2 + '</span> <b>' + m.t2 + '</b> ' + logo2Html + '</div>' + 
+                       timeLabelHtml + 
+                       '</div>'; 
+            }).join(''); 
+        } 
+    }
+}
+function updateMatchLogos() { 
+    const t1 = document.getElementById('matchTeam1').value; 
+    const t2 = document.getElementById('matchTeam2').value; 
+    const log1 = document.getElementById('logo-match-1'); 
+    const log2 = document.getElementById('logo-match-2'); 
+    if (log1 && t1 && teams[t1]) log1.innerHTML = teams[t1].img ? '<img src="' + teams[t1].img + '">' : '★'; 
+    if (log2 && t2 && teams[t2]) log2.innerHTML = teams[t2].img ? '<img src="' + teams[t2].img + '">' : '★'; 
+} 
+
+function openPlayerModal(index) { 
+    currentSelectedModalPlayerIndex = index; 
+    const player = players[index]; 
+    document.getElementById('modalPlayerName').innerText = 'Боец: ' + player.name + ' (' + (player.role || 'Штурмовик') + ')'; 
+    let kInp = document.getElementById('input-kills'); 
+    let dInp = document.getElementById('input-deaths'); 
+    let rInp = document.getElementById('input-revives'); 
+    let bInp = document.getElementById('input-bombs'); 
+    kInp.value = player.kills || 0; 
+    dInp.value = player.deaths || 0; 
+    rInp.value = player.revives || 0; 
+    bInp.value = player.bombs || 0; 
+    if (isAdmin) { 
+        kInp.removeAttribute('disabled'); 
+        dInp.removeAttribute('disabled'); 
+        rInp.removeAttribute('disabled'); 
+        bInp.removeAttribute('disabled'); 
+        document.getElementById('modalStatSaveBtn').style.display = 'block'; 
+        document.getElementById('modalStatCancelBtn').innerText = 'Отмена'; 
+    } else { 
+        kInp.setAttribute('disabled', 'true'); 
+        dInp.setAttribute('disabled', 'true'); 
+        rInp.setAttribute('disabled', 'true'); 
+        bInp.setAttribute('disabled', 'true'); 
+        document.getElementById('modalStatSaveBtn').style.display = 'none'; 
+        document.getElementById('modalStatCancelBtn').innerText = 'Закрыть'; 
+    } 
+    document.getElementById('playerStatsModal').style.display = 'flex'; 
+}
+
+async function savePlayerStats() { 
+    if (!isAdmin || currentSelectedModalPlayerIndex === null) return; 
+    let player = players[currentSelectedModalPlayerIndex]; 
+    let k = parseInt(document.getElementById('input-kills').value); 
+    let d = parseInt(document.getElementById('input-deaths').value); 
+    let r = parseInt(document.getElementById('input-revives').value); 
+    let b = parseInt(document.getElementById('input-bombs').value); 
+    let kills = isNaN(k) || k < 0 ? 0 : k; 
+    let deaths = isNaN(d) || d < 0 ? 0 : d; 
+    let revives = isNaN(r) || r < 0 ? 0 : r; 
+    let bombs = isNaN(b) || b < 0 ? 0 : b; 
+    const { error } = await supabaseClient.from('players').update({ kills, deaths, revives, bombs }).eq('name', player.name); 
+    if (!error) { 
+        closePlayerModal(); 
+        await loadDataFromCloud(); 
+    } else { 
+        alert('Ошибка保存 в облако: ' + error.message); 
+    } 
+} 
+
+function closePlayerModal() { 
+    document.getElementById('playerStatsModal').style.display = 'none'; 
+    currentSelectedModalPlayerIndex = null; 
+} 
+
+function openRoleModal(index) { 
+    if (!isAdmin) return; 
+    currentSelectedRolePlayerIndex = index; 
+    const player = players[index]; 
+    document.getElementById('roleModalTitle').innerText = 'Роль для бойца: ' + player.name; 
+    document.getElementById('modalRoleSelect').value = player.role || "Штурмовик"; 
+    document.getElementById('playerRoleModal').style.display = 'flex'; 
+} 
+
+function closeRoleModal() { 
+    document.getElementById('playerRoleModal').style.display = 'none'; 
+    currentSelectedRolePlayerIndex = null; 
+}
+
+async function savePlayerRole() { 
+    if (!isAdmin || currentSelectedRolePlayerIndex === null) return; 
+    let player = players[currentSelectedRolePlayerIndex]; 
+    let selectedRole = document.getElementById('modalRoleSelect').value; 
+    if (player.team !== "NoTeam" && selectedRole !== "Штурмовик") { 
+        let duplicateExists = players.some((p, idx) => { 
+            return idx !== currentSelectedRolePlayerIndex && p.team === player.team && (p.role || "Штурмовик") === selectedRole; 
+        }); 
+        if (duplicateExists) { 
+            alert('Ошибка тактического лимита! В команде ' + player.team + ' уже есть один ' + selectedRole + '. Два специалиста одной роли недопустимы.'); 
+            return; 
+        } 
+    } 
+    const { error } = await supabaseClient.from('players').update({ role: selectedRole }).eq('name', player.name); 
+    if (!error) { 
+        closeRoleModal(); 
+        await loadDataFromCloud(); 
+    } 
+} 
+
+function openLogoModal(teamName) { 
+    if (!isAdmin) return; 
+    currentSelectedModalTeam = teamName; 
+    document.getElementById('modalTeamName').innerText = 'Логотип команды: ' + teamName; 
+    const teamData = teams[teamName]; 
+    if (teamData.img) { 
+        document.getElementById('modalAddArea').style.display = 'none'; 
+        document.getElementById('modalEditArea').style.display = 'block'; 
+        document.getElementById('editLogoUrl').value = teamData.img; 
+    } else { 
+        document.getElementById('modalAddArea').style.display = 'block'; 
+        document.getElementById('modalEditArea').style.display = 'none'; 
+        document.getElementById('newLogoUrl').value = ''; 
+    } 
+    document.getElementById('logoModal').style.display = 'flex'; 
+} 
+
+function closeModal() { 
+    document.getElementById('logoModal').style.display = 'none'; 
+    currentSelectedModalTeam = ""; 
+}
+
+async function saveModalLogo() { 
+    if (!isAdmin || !currentSelectedModalTeam) return; 
+    const teamData = teams[currentSelectedModalTeam]; 
+    let url = teamData.img ? document.getElementById('editLogoUrl').value.trim() : document.getElementById('newLogoUrl').value.trim(); 
+    if (url) { 
+        const { error } = await supabaseClient.from('teams').update({ img: url }).eq('name', currentSelectedModalTeam); 
+        if (!error) { 
+            closeModal(); 
+            await loadDataFromCloud(); 
+        } 
+    } else { 
+        alert("Пожалуйста, введите ссылку!"); 
+    } 
+} 
+
+async function deleteModalLogo() { 
+    if (!isAdmin || !currentSelectedModalTeam) return; 
+    if (confirm("Удалить логотип этой команды?")) { 
+        const { error } = await supabaseClient.from('teams').update({ img: "" }).eq('name', currentSelectedModalTeam); 
+        if (!error) { 
+            closeModal(); 
+            await loadDataFromCloud(); 
+        } 
+    } 
+}
+async function addTeam() { 
+    if (!isAdmin) return; 
+    const name = document.getElementById('teamName').value.trim(); 
+    if (!name) return; 
+    let teamExists = Object.keys(teams).some(t => t.toLowerCase() === name.toLowerCase()); 
+    if (teamExists) { 
+        alert('Ошибка! Команда с названием ' + name + ' уже зарегистрирована в турнирной системе.'); 
+        return; 
+    } 
+    const { error } = await supabaseClient.from('teams').insert([{ name }]); 
+    if (!error) { 
+        document.getElementById('teamName').value = ''; 
+        await loadDataFromCloud(); 
+    } 
+}
+
+async function deleteTeam(teamName) { 
+    if (!isAdmin) return; 
+    if (confirm('Удалить команду ' + teamName + '?')) { 
+        await supabaseClient.from('players').update({ team: "NoTeam" }).eq('team', teamName); 
+        await supabaseClient.from('teams').delete().eq('name', teamName); 
+        await loadDataFromCloud(); 
+    } 
+}
+
+async function addPlayer() { 
+    if (!isAdmin) return; 
+    const name = document.getElementById('playerName').value.trim(); 
+    if (!name) return; 
+    let playerExists = players.some(p => p.name.toLowerCase() === name.toLowerCase()); 
+    if (playerExists) { 
+        alert('Ошибка! Игрок с именем ' + name + ' уже зарегистрирован в турнирной системе.'); 
+        return; 
+    } 
+    const { error } = await supabaseClient.from('players').insert([{ name, team: 'NoTeam', role: 'Штурмовик' }]);
+    if (!error) { 
+        document.getElementById('playerName').value = ''; 
+        await loadDataFromCloud(); 
+    }
+}
+
+async function deletePlayer(index) { 
+    if (!isAdmin) return; 
+    let player = players[index]; 
+    if (confirm('Удалить игрока ' + player.name + '?')) { 
+        await supabaseClient.from('players').delete().eq('id', player.id); 
+        await loadDataFromCloud(); 
+    } 
+}
+
+async function changePlayerTeam(playerIndex, newTeam) { 
+    if (!isAdmin) return; 
+    let player = players[playerIndex]; 
+    let pRole = player.role || "Штурмовик"; 
+    if (newTeam !== "NoTeam" && pRole !== "Штурмовик") { 
+        let duplicateExists = players.some((p, idx) => { 
+            return idx !== playerIndex && p.team === newTeam && (p.role || "Штурмовик") === pRole; 
+        }); 
+        if (duplicateExists) { 
+            alert('Ошибка лимита! В команде ' + newTeam + ' уже зарегистрирован один ' + pRole + '. Сначала смените роль бойцу.'); 
+            document.getElementById('select-p-' + playerIndex).value = player.team; 
+            return; 
+        } 
+    } 
+    const { error } = await supabaseClient.from('players').update({ team: newTeam }).eq('id', player.id); 
+    if (!error) { 
+        await loadDataFromCloud(); 
+    } 
+}
+
+async function recordMatch() { 
+    if (!isAdmin) return; 
+    const t1 = document.getElementById('matchTeam1').value; 
+    const t2 = document.getElementById('matchTeam2').value; 
+    const s1 = parseInt(document.getElementById('score1').value); 
+    const s2 = parseInt(document.getElementById('score2').value); 
+    if (!t1 || !t2 || t1 === t2 || isNaN(s1) || isNaN(s2) || s1 < 0 || s2 < 0) { 
+        alert("Проверьте правильность заполнения команд и счета!"); 
+        return; 
+    } 
+    let t1_pts = teams[t1].points, t1_w = teams[t1].wins, t1_d = teams[t1].draws, t1_l = teams[t1].losses; 
+    let t2_pts = teams[t2].points, t2_w = teams[t2].wins, t2_d = teams[t2].draws, t2_l = teams[t2].losses; 
+    
+    if (s1 > s2) { 
+        t1_pts += 2; 
+        t1_w += 1; 
+        t2_l += 1; 
+    } else if (s2 > s1) { 
+        t2_pts += 2; 
+        t2_w += 1; 
+        t1_l += 1; /* ОШИБКА УСПЕШНО ИСПРАВЛЕНА: Начисляем поражение команде 1, а не команде 2 */
+    } else { 
+        t1_pts += 1; 
+        t2_pts += 1; 
+        t1_d += 1; 
+        t2_d += 1; 
+    } 
+    let d = new Date(); 
+    let timeString = String(d.getDate()).padStart(2, '0') + '.' + String(d.getMonth() + 1).padStart(2, '0') + '.' + d.getFullYear() + ' в ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); 
+    await supabaseClient.from('matches').insert([{ t1: t1, s1: s1, t2: t2, s2: s2, time: timeString }]); 
+    await supabaseClient.from('teams').update({ points: t1_pts, wins: t1_w, draws: t1_d, losses: t1_l }).eq('name', t1); 
+    await supabaseClient.from('teams').update({ points: t2_pts, wins: t2_w, draws: t2_d, losses: t2_l }).eq('name', t2); 
+    document.getElementById('score1').value = ''; 
+    document.getElementById('score2').value = ''; 
+    await loadDataFromCloud(); 
+}
+
+async function clearHistory() { 
+    if (!isAdmin) return; 
+    if (confirm("Очистить историю матчей и обнулить очки у всех команд?")) { 
+        await supabaseClient.from('matches').delete().neq('time', ''); 
+        const sortedTeams = Object.keys(teams).filter(t => !teams[t].initial); 
+        for (let team of sortedTeams) { 
+            await supabaseClient.from('teams').update({ points: 0, wins: 0, draws: 0, losses: 0 }).eq('name', team); 
+        } 
+        await loadDataFromCloud(); 
+    } 
+}
+
+/* Стартовая загрузка при открытии сайта */
+loadDataFromCloud();
