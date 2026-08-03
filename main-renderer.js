@@ -66,13 +66,19 @@ function renderUI() {
 
 /* СТАРТОВАЯ ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ */
 async function initializeApp() {
-    // 1. Сначала загружаем все данные из облака Supabase
-    await loadDataFromCloud();
-    
-    // 2. После успешной загрузки данных принудительно открываем сохраненную вкладку
-    console.log(`Восстановление сессии: открываем вкладку ${activeTabId}`);
-    switchTab(activeTabId, null);
+    try {
+        // 1. МГНОВЕННО включаем сохраненную вкладку до запросов к серверу, чтобы убрать моргание
+        const savedTabId = localStorage.getItem('str_active_tab') || 'info-tab';
+        switchTab(savedTabId, null);
+        
+        // 2. Параллельно запускаем скачивание данных из облака Supabase для отрисовки списков
+        await loadDataFromCloud();
+        
+        console.log(`[GitHub Pages] Интерфейс успешно инициализирован на вкладке: ${savedTabId}`);
+    } catch (err) {
+        console.error('Критическая ошибка при старте приложения:', err.message);
+    }
 }
 
-// Запускаем приложение через новую функцию инициализации
+// Запускаем приложение через ускоренный инициализатор
 initializeApp();
