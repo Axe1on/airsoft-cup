@@ -34,10 +34,13 @@ async function loadTournamentData() {
  ['A', 'B', 'C', 'D'].forEach(slot => {
  const el = document.getElementById('slot-team-' + slot);
  if (el) {
- if (document.activeElement === el) return; /* ЗАЩИТА: не сбрасываем фокус выбора */
+ if (document.activeElement === el) return;
  const currentVal = el.value;
  el.innerHTML = '<option value="">-- Выбрать команду --</option>' + sortedTeams.map(t => '<option value="' + t.name + '">' + t.name + '</option>').join('');
  if (currentVal) el.value = currentVal;
+ // Защита: зритель не может менять настройки слотов
+ if (!isAdmin) el.setAttribute('disabled', 'true');
+ else el.removeAttribute('disabled');
  }
  });
  
@@ -47,7 +50,22 @@ async function loadTournamentData() {
  if (b) { b.innerText = "Записать матч"; b.style.background = "#d97706"; b.style.color = "#1e2522"; b.removeAttribute('disabled'); }
  const sc1 = document.getElementById('score-' + id + '-t1');
  const sc2 = document.getElementById('score-' + id + '-t2');
- if (sc1 && sc2 && !isAdmin) { sc1.value = ""; sc2.value = ""; }
+ const sel1 = document.getElementById('select-' + id + '-t1');
+ const sel2 = document.getElementById('select-' + id + '-t2');
+ 
+ // Разблокируем для админа по умолчанию (если матч ещё не сыгран)
+ if (sc1) sc1.removeAttribute('disabled');
+ if (sc2) sc2.removeAttribute('disabled');
+ if (sel1) sel1.removeAttribute('disabled');
+ if (sel2) sel2.removeAttribute('disabled');
+ 
+ // Защита: если зашёл зритель — выключаем абсолютно всё сразу
+ if (!isAdmin) {
+ if (sc1) { sc1.value = ""; sc1.setAttribute('disabled', 'true'); }
+ if (sc2) { sc2.value = ""; sc2.setAttribute('disabled', 'true'); }
+ if (sel1) sel1.setAttribute('disabled', 'true');
+ if (sel2) sel2.setAttribute('disabled', 'true');
+ }
  });
  
  const { data: savedCupMatches } = await supabaseClient.from('cup_matches').select('*');
@@ -78,7 +96,7 @@ async function loadTournamentData() {
  if (s1 && t1Clean) s1.value = t1Clean;
  if (s2 && t2Clean) s2.value = t2Clean;
  
- if (sc1 && m.score1 !== undefined && document.activeElement !== sc1) sc1.value = m.score1; /* ЗАЩИТА: не затираем ввод счета */
+ if (sc1 && m.score1 !== undefined && document.activeElement !== sc1) sc1.value = m.score1;
  if (sc2 && m.score2 !== undefined && document.activeElement !== sc2) sc2.value = m.score2;
  if (t1Clean) document.getElementById('view-' + m.match_id + '-t1').innerText = t1Clean;
  if (t2Clean) document.getElementById('view-' + m.match_id + '-t2').innerText = t2Clean;
@@ -87,6 +105,12 @@ async function loadTournamentData() {
  document.getElementById('score-view-' + m.match_id + '-t1').innerText = m.score1;
  document.getElementById('score-view-' + m.match_id + '-t2').innerText = m.score2;
  if (b) { b.innerText = "Матч сыгран "; b.style.background = "#4a5d52"; b.style.color = "#a3a3a3"; b.setAttribute('disabled', 'true'); }
+ 
+ // ФИКС: Если матч сыгран, полностью блокируем ввод счёта и выбор команд даже для Админа!
+ if (sc1) sc1.setAttribute('disabled', 'true');
+ if (sc2) sc2.setAttribute('disabled', 'true');
+ if (s1) s1.setAttribute('disabled', 'true');
+ if (s2) s2.setAttribute('disabled', 'true');
  
  const isRoundRobin = m.match_id.startsWith('ga') || m.match_id.startsWith('gb') || m.match_id.startsWith('gc');
  if (isRoundRobin) {
@@ -112,14 +136,14 @@ async function loadTournamentData() {
  if (gfData) {
  let w = (gfData.score1 > gfData.score2) ? gfData.team1.trim() : gfData.team2.trim();
  let l = (gfData.score1 > gfData.score2) ? gfData.team2.trim() : gfData.team1.trim();
- document.getElementById('podium-1').innerHTML = ` <b style="color:#fff; font-size:16px;"> ${w}</b>`;
- document.getElementById('podium-2').innerHTML = ` <b style="font-size:14px;">${l}</b>`;
+ document.getElementById('podium-1').innerHTML = `🏆 <b class="gold-text"> ${w}</b>`;
+ document.getElementById('podium-2').innerHTML = `🥈 <b class="silver-text">${l}</b>`;
  } else {
  document.getElementById('podium-1').innerHTML = ' Ожидание...'; document.getElementById('podium-2').innerHTML = ' Ожидание...';
  }
  if (m3Data) {
  let w = (m3Data.score1 > m3Data.score2) ? m3Data.team1.trim() : m3Data.team2.trim();
- document.getElementById('podium-3').innerHTML = ` <b>${w}</b>`;
+ document.getElementById('podium-3').innerHTML = `🥉 <b class="bronze-text">${w}</b>`;
  } else {
  document.getElementById('podium-3').innerHTML = ' Ожидание...';
  }

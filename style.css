@@ -899,51 +899,77 @@ button.action-btn:disabled {
     box-sizing: border-box;
 }
 
+/* ВЕРТИКАЛЬНЫЙ ПОРЯДОК МЕСТ НА ПЬЕДЕСТАЛЕ */
 .podium-box-row {
     display: flex;
-    gap: 15px;
+    flex-direction: column; /* Места теперь выстраиваются строго друг под другом */
+    gap: 12px;
     margin-top: 15px;
 }
 
 .place-box {
-    flex: 1;
     display: flex;
-    flex-direction: column;
+    align-items: center; /* Элементы стоят ровно на одной линии */
+    gap: 15px;
     background: #2d3732;
-    padding: 12px;
+    padding: 14px 20px;
     border-radius: 6px;
     border: 1px solid #3f4e46;
+    transition: transform 0.2s;
 }
 
+.place-box:hover {
+    transform: translateX(5px); /* Легкий тактический интерактивный сдвиг */
+}
+
+/* ИЕРАРХИЯ СТИЛЕЙ ПО УБЫВАНИЮ */
 .place-1 { 
     border-color: #d97706; 
+    background: linear-gradient(90deg, #2d3732 0%, #3a473f 100%);
 }
-.place-1 .place-team { 
-    font-size: 20px; 
-    font-weight: bold; 
-    color: #fff; 
-}
-.place-2 .place-team { 
-    font-size: 16px; 
-    font-weight: bold; 
-    color: #e2e8f0; 
-}
-.place-3 .place-team { 
-    font-size: 13px; 
-    font-weight: bold; 
-    color: #a3a3a3; 
+.place-1 .place-team, .place-1 #podium-1 { 
+    font-size: 24px; /* Самый крупный шрифт для победителя */
+    font-weight: 800; 
+    color: #ffffff; 
 }
 
-.cup-icon { 
-    margin-right: 6px; 
+.place-2 {
+    border-color: #94a3b8;
 }
+.place-2 .place-team, .place-2 #podium-2 { 
+    font-size: 19px; /* Средний шрифт для второго места */
+    font-weight: 700; 
+    color: #e2e8f0; 
+}
+
+.place-3 {
+    border-color: #b45309;
+}
+.place-3 .place-team, .place-3 #podium-3 { 
+    font-size: 15px; /* Небольшой шрифт для третьего места */
+    font-weight: 600; 
+    color: #cbd5e1; 
+}
+
+/* КРАСИВОЕ ЦВЕТОВОЕ ОФОРМЛЕНИЕ ТЕКСТА КУБКОВ */
+.gold-text { color: #eccc68; text-shadow: 0 0 10px rgba(236,204,104,0.3); }
+.silver-text { color: #cbd5e1; text-shadow: 0 0 10px rgba(203,213,225,0.2); }
+.bronze-text { color: #f59e0b; }
+
+.cup-icon { 
+    font-size: 20px;
+    display: inline-flex;
+    align-items: center;
+}
+
 .place-lbl { 
-    font-size: 11px; 
+    font-size: 12px; 
     text-transform: uppercase; 
     color: #b3c0a4; 
-    margin-bottom: 4px; 
     font-weight: bold; 
+    min-width: 80px; /* Чтобы названия мест "1 МЕСТО" не прыгали */
 }
+
 
 /* ТАБЛИЦА ОЧКОВ КУБКА */
 .cup-table-list li {
