@@ -11,7 +11,7 @@
     <!-- ГЛАВНЫЙ КОНТЕЙНЕР ПРИЛОЖЕНИЯ -->
     <div class="app-layout">
         
-        <!-- ЛЕВОЕ НАВИГАЦИОННОЕ МЕНЮ (СТИЛЬ ВК) -->
+        <!-- ЛЕВОЕ НАВИГАЦИОННОЕ МЕНЮ -->
         <div class="side-navigation">
             <div class="nav-header">
                 <h2>AIRSOFT CUP</h2>
@@ -24,7 +24,8 @@
                 <button class="menu-item active" onclick="switchTab('main-tab', this)">🏠 Главная</button>
                 <button class="menu-item" onclick="switchTab('rating-tab', this)">🛡️ Команды и Игроки</button>
                 <button class="menu-item" onclick="switchTab('matches-tab', this)">⚔️ Калькулятор игр</button>
-                <button class="menu-item bracket-link-btn" onclick="window.open('bracket.html', '_blank')">📊 Турнирная Сетка ↗</button>
+                <!-- ТУРНИР ВСТРОЕН В МЕНЮ КАК ВКЛАДКА -->
+                <button class="menu-item" onclick="switchTab('bracket-tab', this); loadTournamentData();">🏆 Турнир</button>
             </div>
 
             <div class="nav-footer">
@@ -68,6 +69,221 @@
                     </div>
                 </div>
             </div>
+            <!-- ВКЛАДКА 4: ТУРНИР (ВСТРОЕННЫЙ) -->
+            <div id="bracket-tab" class="tab-content">
+                <h1>Tactical Tournament Board</h1>
+                <p class="info-text">Сквозное онлайн-табло. Зрители видят только названия команд и итоговый счет матчей.</p>
+                
+                <div style="width:100%; display:flex; justify-content: space-between; margin-bottom:15px; gap: 10px;">
+                    <button onclick="loadTournamentData()" style="background:#4a5d52; color:white; border:none; padding:8px 15px; font-weight:bold; cursor:pointer; border-radius:4px; width: auto;">🔄 Обновить сетку</button>
+                    <button onclick="clearBracketTables()" class="clear-btn admin-only" style="margin: 0; width: auto; padding: 8px 15px;">❌ Очистить таблицы кубка</button>
+                </div>
+
+                <div class="bracket-row-layout">
+                    <!-- СТОЛБЕЦ 1: ТУР 1 -->
+                    <div class="stage-column">
+                        <div class="group-title">Группа A — Тур 1</div>
+                        <div class="matchup-card">
+                            <div class="team-row admin-controls">
+                                <select id="select-ga1-t1" onchange="saveSelectionToCloud('ga1', 1)"></select>
+                                <input type="number" id="score-ga1-t1" placeholder="0" onchange="saveSelectionToCloud('ga1', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-ga1-t2" onchange="saveSelectionToCloud('ga1', 2)"></select>
+                                <input type="number" id="score-ga1-t2" placeholder="0" onchange="saveSelectionToCloud('ga1', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-ga1-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-ga1-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-ga1-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-ga1-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-ga1" onclick="executeMatch('ga1')">Сыграть матч</button>
+                        </div>
+                        <div class="matchup-card">
+                            <div class="team-row admin-controls">
+                                <select id="select-ga2-t1" onchange="saveSelectionToCloud('ga2', 1)"></select>
+                                <input type="number" id="score-ga2-t1" placeholder="0" onchange="saveSelectionToCloud('ga2', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-ga2-t2" onchange="saveSelectionToCloud('ga2', 2)"></select>
+                                <input type="number" id="score-ga2-t2" placeholder="0" onchange="saveSelectionToCloud('ga2', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-ga2-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-ga2-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-ga2-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-ga2-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-ga2" onclick="executeMatch('ga2')">Сыграть матч</button>
+                        </div>
+                    </div>
+
+                    <!-- СТОЛБЕЦ 2: ТУР 2 -->
+                    <div class="stage-column">
+                        <div class="group-title">Группа A — Тур 2</div>
+                        <div class="matchup-card">
+                            <div class="team-row admin-controls">
+                                <select id="select-gb1-t1" onchange="saveSelectionToCloud('gb1', 1)"></select>
+                                <input type="number" id="score-gb1-t1" placeholder="0" onchange="saveSelectionToCloud('gb1', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-gb1-t2" onchange="saveSelectionToCloud('gb1', 2)"></select>
+                                <input type="number" id="score-gb1-t2" placeholder="0" onchange="saveSelectionToCloud('gb1', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gb1-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gb1-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gb1-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gb1-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-gb1" onclick="executeMatch('gb1')">Сыграть матч</button>
+                        </div>
+                        <div class="matchup-card">
+                            <div class="team-row admin-controls">
+                                <select id="select-gb2-t1" onchange="saveSelectionToCloud('gb2', 1)"></select>
+                                <input type="number" id="score-gb2-t1" placeholder="0" onchange="saveSelectionToCloud('gb2', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-gb2-t2" onchange="saveSelectionToCloud('gb2', 2)"></select>
+                                <input type="number" id="score-gb2-t2" placeholder="0" onchange="saveSelectionToCloud('gb2', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gb2-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gb2-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gb2-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gb2-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-gb2" onclick="executeMatch('gb2')">Сыграть матч</button>
+                        </div>
+                    </div>
+                    <!-- СТОЛБЕЦ 3: ТУР 3 -->
+                    <div class="stage-column">
+                        <div class="group-title">Группа A — Тур 3</div>
+                        <div class="matchup-card">
+                            <div class="team-row admin-controls">
+                                <select id="select-gc1-t1" onchange="saveSelectionToCloud('gc1', 1)"></select>
+                                <input type="number" id="score-gc1-t1" placeholder="0" onchange="saveSelectionToCloud('gc1', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-gc1-t2" onchange="saveSelectionToCloud('gc1', 2)"></select>
+                                <input type="number" id="score-gc1-t2" placeholder="0" onchange="saveSelectionToCloud('gc1', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gc1-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gc1-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gc1-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gc1-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-gc1" onclick="executeMatch('gc1')">Сыграть матч</button>
+                        </div>
+                        <div class="matchup-card">
+                            <div class="team-row admin-controls">
+                                <select id="select-gc2-t1" onchange="saveSelectionToCloud('gc2', 1)"></select>
+                                <input type="number" id="score-gc2-t1" placeholder="0" onchange="saveSelectionToCloud('gc2', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-gc2-t2" onchange="saveSelectionToCloud('gc2', 2)"></select>
+                                <input type="number" id="score-gc2-t2" placeholder="0" onchange="saveSelectionToCloud('gc2', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gc2-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gc2-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gc2-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gc2-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-gc2" onclick="executeMatch('gc2')">Сыграть матч</button>
+                        </div>
+                    </div>
+
+                    <!-- СТОЛБЕЦ 4: МАТЧ ЗА 3 МЕСТО -->
+                    <div class="stage-column">
+                        <div class="group-title" style="background: #3f4e46; color: #a3a3a3;">Игра за 3 место</div>
+                        <div class="matchup-card" style="border-color: #4a5d52;">
+                            <div class="team-row admin-controls">
+                                <select id="select-m3-t1" onchange="saveSelectionToCloud('m3', 1)"></select>
+                                <input type="number" id="score-m3-t1" placeholder="0" onchange="saveSelectionToCloud('m3', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-m3-t2" onchange="saveSelectionToCloud('m3', 2)"></select>
+                                <input type="number" id="score-m3-t2" placeholder="0" onchange="saveSelectionToCloud('m3', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-m3-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-m3-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-m3-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-m3-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-m3" onclick="executeMatch('m3')">Сыграть матч</button>
+                        </div>
+                    </div>
+
+                    <!-- СТОЛБЕЦ 5: ГРАНД-ФИНАЛ -->
+                    <div class="stage-column">
+                        <div class="group-title" style="background: #d97706; color: #1e2522;">Гранд-Финал</div>
+                        <div class="matchup-card" style="border-color: #d97706;">
+                            <div class="team-row admin-controls">
+                                <select id="select-gf-t1" onchange="saveSelectionToCloud('gf', 1)"></select>
+                                <input type="number" id="score-gf-t1" placeholder="0" onchange="saveSelectionToCloud('gf', 1)">
+                            </div>
+                            <div class="team-row admin-controls">
+                                <select id="select-gf-t2" onchange="saveSelectionToCloud('gf', 2)"></select>
+                                <input type="number" id="score-gf-t2" placeholder="0" onchange="saveSelectionToCloud('gf', 2)">
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gf-t1">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gf-t1">-</span>
+                            </div>
+                            <div class="team-row viewer-row">
+                                <span class="viewer-text" id="view-gf-t2">Ожидание...</span>
+                                <span class="viewer-score-box" id="score-view-gf-t2">-</span>
+                            </div>
+                            <button class="action-btn admin-controls" id="btn-gf" onclick="executeMatch('gf')">Сыграть матч</button>
+                        </div>
+                    </div>
+                </div> <!-- Закрываем .bracket-row-layout -->
+                <!-- НИЖНЯЯ ПАНЕЛЬ ИТОГОВ И ЖИВЫХ ОЧКОВ КУБКА -->
+                <div class="bottom-results-layout">
+                    <div class="bottom-section">
+                        <h3 style="color: #b3c0a4; font-size: 14px;">📊 Живые очки в группе кубка</h3>
+                        <ul id="cupGroupLeaderboard" class="cup-table-list">
+                            <li style="background:transparent; text-align:center; color:#a3a3a3; padding:10px;">Сыграйте матчи для расчета очков</li>
+                        </ul>
+                    </div>
+
+                    <div class="bottom-section" style="border-color: #d97706;">
+                        <h3 style="color: #b3c0a4; font-size: 14px;">🏆 Пьедестал почета</h3>
+                        <div class="podium-box-row">
+                            <div class="place-box place-1">
+                                <div class="place-lbl">1 Место</div>
+                                <div class="place-team" id="podium-1">🥇 Ожидание...</div>
+                            </div>
+                            <div class="place-box place-2">
+                                <div class="place-lbl">2 Место</div>
+                                <div class="place-team" id="podium-2">🥈 Ожидание...</div>
+                            </div>
+                            <div class="place-box place-3">
+                                <div class="place-lbl">3 Место</div>
+                                <div class="place-team" id="podium-3">🥉 Ожидание...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- Закрываем #bracket-tab -->
             <!-- ВКЛАДКА 2: РЕЙТИНГ И УПРАВЛЕНИЕ -->
             <div id="rating-tab" class="tab-content">
                 <h1>Управление турниром</h1>
@@ -101,7 +317,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- ВКЛАДКА 3: РЕЗУЛЬТАТЫ И КАЛЬКУЛЯТОР -->
             <div id="matches-tab" class="tab-content">
                 <h1 id="matchSectionTitle">Результаты матчей</h1>

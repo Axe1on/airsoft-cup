@@ -431,3 +431,156 @@ body.is-admin .player-name-clickable:hover { color: #d97706; }
     #playersList li > div:last-child { width: 100%; justify-content: space-between; display: flex; gap: 5px; }
     #playersList li select { flex: 1; }
 }
+/* ГОРИЗОНТАЛЬНАЯ СЕТКА ЭТАПОВ КУБКА */
+.bracket-row-layout {
+    display: flex;
+    width: 100%;
+    gap: 20px;
+    align-items: flex-start;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    margin-top: 15px;
+}
+
+.stage-column {
+    flex: 1;
+    min-width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.group-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #b3c0a4;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #3f4e46;
+    padding: 6px;
+    font-size: 13px;
+    text-align: center;
+    background: #1a221e;
+    border-radius: 4px;
+}
+
+.matchup-card {
+    background: #2d3732;
+    border: 1px solid #4a5d52;
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.team-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 32px;
+}
+
+/* УПРАВЛЕНИЕ ВИДИМОСТЬЮ В КАРТОЧКАХ СЕТКИ */
+.matchup-card .admin-controls { display: none !important; }
+body.is-admin .matchup-card .admin-controls { display: block !important; }
+body.is-admin .matchup-card .admin-controls.team-row { display: flex !important; }
+body.is-admin .matchup-card .viewer-row { display: none !important; }
+
+/* СТИЛИ ЭЛЕМЕНТОВ СЕТКИ */
+.matchup-card select { flex: 1; font-weight: bold; font-size: 13px; padding: 6px; margin: 0; }
+.matchup-card input[type="number"] { width: 48px; text-align: center; font-weight: bold; border-color: #d97706; padding: 6px; margin: 0; }
+
+.viewer-text, .viewer-score-box { font-weight: bold; font-size: 14px; color: #e2e8f0; }
+.viewer-score-box { 
+    background: #1a221e; 
+    padding: 2px 8px; 
+    border-radius: 4px; 
+    color: #eccc68; 
+    font-family: monospace; 
+    min-width: 15px; 
+    text-align: center; 
+}
+
+/* КНОПКА СЫГРАТЬ МАТЧ В СЕТКЕ */
+button.action-btn {
+    background: #d97706;
+    color: #1e2522;
+    font-weight: bold;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 10px;
+    width: 100%;
+    border: none;
+    padding: 8px;
+    margin-top: 2px;
+}
+button.action-btn:hover { background: #f59e0b; }
+button.action-btn:disabled { background: #4a5d52; color: #a3a3a3; cursor: default; }
+/* НИЖНИЙ БЛОК РЕЗУЛЬТАТОВ КУБКА */
+.bottom-results-layout {
+    display: flex;
+    width: 100%;
+    gap: 30px;
+    margin-top: 25px;
+    border-top: 2px dashed #3f4e46;
+    padding-top: 25px;
+}
+
+.bottom-results-layout .bottom-section {
+    flex: 1;
+    background: #161c19;
+    border: 1px solid #3f4e46;
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.podium-box-row { 
+    display: flex; 
+    gap: 15px; 
+    margin-top: 15px; 
+}
+
+.place-box { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    background: #2d3732; 
+    padding: 12px; 
+    border-radius: 6px; 
+    border: 1px solid #3f4e46; 
+}
+
+.place-1 { border-color: #d97706; }
+.place-1 .place-team { font-size: 20px; font-weight: bold; color: #fff; }
+.place-2 .place-team { font-size: 16px; font-weight: bold; color: #e2e8f0; }
+.place-3 .place-team { font-size: 13px; font-weight: bold; color: #a3a3a3; }
+.cup-icon { margin-right: 6px; }
+.place-lbl { font-size: 11px; text-transform: uppercase; color: #b3c0a4; margin-bottom: 4px; font-weight: bold; }
+
+/* ТАБЛИЦА ОЧКОВ КУБКА */
+.cup-table-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #2d3732;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    border-left: 3px solid #d97706;
+    font-weight: bold;
+    font-size: 14px;
+}
+.cup-table-list li span { color: #eccc68; }
+
+/* АДАПТИВНОСТЬ НИЖНЕЙ СЕКЦИИ ТУРНИРА */
+@media screen and (max-width: 768px) {
+    .bottom-results-layout {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .podium-box-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
