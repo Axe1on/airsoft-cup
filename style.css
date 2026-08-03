@@ -2,67 +2,208 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     background: #1e2522; 
     color: #e2e8f0; 
-    margin: 15px; 
-    padding-top: 45px; /* Место под верхнюю панель админа */
+    margin: 0; 
+    padding: 0;
 }
 
-/* ВЕРХНЯЯ ТАКТИЧЕСКАЯ ПАНЕЛЬ СТАТУСА */
-.top-admin-bar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    background: #161c19;
-    border-bottom: 1px solid #3f4e46;
+/* ГЛАВНАЯ СЕТКА ПРИЛОЖЕНИЯ В СТИЛЕ ВК */
+.app-layout {
     display: flex;
-    align-items: center;
+    min-height: 100vh;
+}
+
+/* БОКОВАЯ НАВИГАЦИОННАЯ ПАНЕЛЬ */
+.side-navigation {
+    width: 260px;
+    background: #161c19;
+    border-right: 1px solid #3f4e46;
+    display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    padding: 0 15px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
     box-sizing: border-box;
-    z-index: 2000;
-    font-size: 13px;
-    font-weight: bold;
-    text-transform: uppercase;
+    padding: 20px 15px;
 }
+
+.nav-header h2 {
+    margin: 0 0 5px 0;
+    color: #b3c0a4;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    text-align: center;
+}
+
+.role-badge-container {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
 #adminStatusText {
+    background: #2d3732;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
     color: #a3a3a3;
-    letter-spacing: 0.5px;
-}
-#authBtn {
-    width: auto;
-    padding: 4px 15px;
-    margin: 0;
-    font-size: 12px;
-    background: #4a5d52;
-    color: #e2e8f0;
+    text-transform: uppercase;
     border: 1px solid #3f4e46;
 }
-#authBtn:hover {
-    background: #d97706;
-    color: #1e2522;
+
+body.is-admin #adminStatusText {
+    color: #d97706;
+    border-color: #d97706;
 }
 
+.menu-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+
+.menu-item {
+    width: 100%;
+    text-align: left;
+    padding: 11px 14px;
+    background: transparent;
+    border: none;
+    color: #a3a3a3;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: none;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    margin: 0;
+}
+
+.menu-item:hover {
+    background: #1e2522;
+    color: #e2e8f0;
+}
+
+.menu-item.active {
+    background: #4a5d52;
+    color: #ffffff;
+}
+
+.menu-item.bracket-link-btn {
+    background: #1a221e;
+    color: #b3c0a4;
+    border: 1px dashed #3f4e46;
+    margin-top: 15px;
+}
+.menu-item.bracket-link-btn:hover {
+    background: #556b2f;
+    color: #fff;
+    border-color: #556b2f;
+}
+
+#authBtn {
+    background: #2d3732;
+    color: #a3a3a3;
+    border: 1px solid #3f4e46;
+    padding: 10px;
+    font-size: 13px;
+}
+#authBtn:hover {
+    background: #991b1b;
+    color: white;
+    border-color: #991b1b;
+}
+body.is-admin #authBtn:hover {
+    background: #991b1b;
+}
+
+/* ЦЕНТРАЛЬНАЯ ОБЛАСТЬ С КОНТЕНТОМ */
+.main-content-area {
+    flex: 1;
+    padding: 25px 30px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* УПРАВЛЕНИЕ ОТОБРАЖЕНИЕМ ВКЛАДОК */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+/* КАРТОЧКА С ТЕКСТОМ НА ГЛАВНОЙ */
+.text-content-card {
+    line-height: 1.6;
+    font-size: 15px;
+}
+.text-content-card ul {
+    margin: 15px 0;
+    padding-left: 5px;
+}
+.text-content-card li {
+    margin-bottom: 8px;
+    color: #b3c0a4;
+}
+
+/* БЛОК АВТОРОВ */
+.authors-block {
+    margin-top: 30px;
+    border-top: 1px dashed #3f4e46;
+    padding-top: 20px;
+}
+.author-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #161c19;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-top: 10px;
+    border: 1px solid #3f4e46;
+    max-width: 320px;
+}
+.author-icon {
+    font-size: 20px;
+    background: #2d3732;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+.author-name {
+    font-weight: bold;
+    font-size: 15px;
+    color: #ffffff;
+}
+.author-callsign {
+    font-size: 12px;
+    color: #a3a3a3;
+}
+.author-callsign b {
+    color: #d97706;
+}
+
+/* БАЗОВЫЕ СТИЛИ СЕКЦИЙ И ФОРМ */
 h1, h2, h3 { 
     color: #b3c0a4; 
     text-transform: uppercase;
     letter-spacing: 1px;
+    margin-top: 0;
 }
-
 h1 {
     border-bottom: 2px solid #556b2f;
     padding-bottom: 10px;
     font-size: 22px;
-    text-align: center;
 }
 
 .container { 
     display: flex; 
     flex-wrap: wrap; 
     gap: 15px; 
-    margin-bottom: 15px; 
 }
-
 .section { 
     background: #2d3732; 
     padding: 15px; 
@@ -71,12 +212,10 @@ h1 {
     min-width: 300px; 
     border: 1px solid #3f4e46;
 }
-
 .full-section { 
     background: #2d3732; 
     padding: 15px; 
     border-radius: 6px; 
-    margin-top: 15px; 
     border: 1px solid #3f4e46;
 }
 
@@ -91,12 +230,10 @@ input, select, button {
     color: #f1f2f6;
     font-size: 15px;
 }
-
 input:focus, select:focus {
     outline: none;
     border-color: #d97706; 
 }
-
 button { 
     background: #d97706; 
     color: #1e2522;
@@ -105,10 +242,7 @@ button {
     text-transform: uppercase;
     transition: background 0.2s;
 }
-
-button:hover { 
-    background: #f59e0b; 
-}
+button:hover { background: #f59e0b; }
 
 .delete-btn { 
     background: #991b1b; 
@@ -120,10 +254,7 @@ button:hover {
     width: auto; 
     font-size: 13px; 
 }
-
-.delete-btn:hover { 
-    background: #dc2626; 
-}
+.delete-btn:hover { background: #dc2626; }
 
 .stats-btn {
     background: #4a5d52;
@@ -135,38 +266,27 @@ button:hover {
     width: auto;
     font-size: 14px;
 }
-
-.stats-btn:hover {
-    background: #556b2f;
-}
+.stats-btn:hover { background: #556b2f; }
 
 .clear-btn { 
     background: #991b1b; 
     color: white;
     margin-top: 20px; 
     width: 100%; 
-    padding: 12px; 
 }
 
-ul { 
-    list-style: none; 
-    padding: 0; 
-}
+ul { list-style: none; padding: 0; }
 
 /* УПРАВЛЕНИЕ ВИДИМОСТЬЮ ДЛЯ ЗРИТЕЛЯ И АДМИНА */
-.admin-only, .admin-only-flex, .admin-only-cell {
-    display: none !important; /* По умолчанию всё скрыто */
-}
-
-/* Если у тега body есть класс IS-ADMIN, мы включаем эти элементы */
+.admin-only, .admin-only-flex, .admin-only-cell { display: none !important; }
 body.is-admin .admin-only { display: block !important; }
 body.is-admin .admin-only-flex { display: flex !important; }
 body.is-admin .admin-only-cell { display: table-cell !important; }
 
-/* Динамическая сетка колонок в зависимости от роли (админ видит колонку удаления X) */
+/* СЕТКА СТАТИСТИКИ КОМАНД */
 .stats-header, .team-row-item {
     display: grid;
-    grid-template-columns: 30px 3fr 1.2fr 1fr; /* Сетка для зрителя (без колонки удаления) */
+    grid-template-columns: 30px 3fr 1.2fr 1fr;
     align-items: center;
     gap: 4px;
     padding: 10px 6px;
@@ -174,9 +294,8 @@ body.is-admin .admin-only-cell { display: table-cell !important; }
     font-size: 13px;
 }
 body.is-admin .stats-header, body.is-admin .team-row-item {
-    grid-template-columns: 30px 3fr 1.2fr 1fr 45px; /* Сетка для админа (с колонкой X) */
+    grid-template-columns: 30px 3fr 1.2fr 1fr 45px;
 }
-
 .stats-header {
     background: #1a221e;
     color: #b3c0a4;
@@ -185,19 +304,14 @@ body.is-admin .stats-header, body.is-admin .team-row-item {
     border: 1px solid #3f4e46;
     text-align: center;
 }
-
 .hdr-team { text-align: left; padding-left: 44px; }
-
 #teamsList > li {
     background: #232d28; 
     margin-bottom: 6px; 
     border-left: 3px solid #556b2f; 
     border-radius: 4px;
 }
-
-.team-row-item {
-    text-align: center;
-}
+.team-row-item { text-align: center; }
 
 #playersList li {
     display: flex;
@@ -210,13 +324,7 @@ body.is-admin .stats-header, body.is-admin .team-row-item {
     border-radius: 4px;
 }
 
-.team-main-cell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    text-align: left;
-}
-
+.team-main-cell { display: flex; align-items: center; gap: 8px; text-align: left; }
 .team-name-text {
     font-weight: bold;
     overflow: hidden;
@@ -224,11 +332,8 @@ body.is-admin .stats-header, body.is-admin .team-row-item {
     white-space: nowrap;
     max-width: 110px;
     cursor: pointer;
-    transition: color 0.2s;
 }
-.team-name-text:hover {
-    color: #d97706;
-}
+.team-name-text:hover { color: #d97706; }
 
 .team-roster-box {
     display: none;
@@ -240,222 +345,87 @@ body.is-admin .stats-header, body.is-admin .team-row-item {
     text-align: left;
     font-size: 12px;
 }
-.team-roster-box.active {
-    display: block;
-}
-.roster-title {
-    color: #b3c0a4;
-    font-weight: bold;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    font-size: 11px;
-}
-.roster-member-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 0;
-    border-bottom: 1px solid #2d3732;
-}
+.team-roster-box.active { display: block; }
+.roster-title { color: #b3c0a4; font-weight: bold; margin-bottom: 6px; text-transform: uppercase; font-size: 11px; }
+.roster-member-item { display: flex; align-items: center; gap: 6px; padding: 6px 0; border-bottom: 1px solid #2d3732; }
 
 .team-logo-box { 
-    width: 32px; 
-    height: 32px; 
-    background: #1a221e; 
-    border: 1px solid #4a5d52; 
-    border-radius: 4px; 
-    display: inline-flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 14px; 
-    color: #b3c0a4; 
-    overflow: hidden; 
-    flex-shrink: 0;
+    width: 32px; height: 32px; background: #1a221e; border: 1px solid #4a5d52; 
+    border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; 
+    font-size: 14px; color: #b3c0a4; overflow: hidden; flex-shrink: 0;
 }
+#teamsList .team-logo-box { cursor: pointer; }
+body:not(.is-admin) #teamsList .team-logo-box { cursor: default; }
+.team-logo-box img { width: 100%; height: 100%; object-fit: cover; }
 
-#teamsList .team-logo-box {
-    cursor: pointer;
-}
-body:not(.is-admin) #teamsList .team-logo-box {
-    cursor: default; /* Обычный курсор для зрителя, так как он не может менять лого */
-}
+.role-icon-svg { width: 16px; height: 16px; fill: #ffffff; margin-left: 6px; vertical-align: middle; display: inline-block; }
+.player-name-clickable { font-weight: bold; display: inline-flex; align-items: center; }
+body.is-admin .player-name-clickable { cursor: pointer; }
+body.is-admin .player-name-clickable:hover { color: #d97706; }
 
-.team-logo-box img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-}
+.rank-badge { background: #556b2f; color: white; font-weight: bold; padding: 4px 0; border-radius: 4px; font-size: 13px; width: 100%; text-align: center; }
+.player-meta-box { display: flex; flex-direction: column; gap: 2px; }
+.player-mini-stats { font-size: 11px; color: #a3a3a3; font-family: monospace; }
 
-.role-icon-svg {
-    width: 16px;
-    height: 16px;
-    fill: #ffffff;
-    margin-left: 6px; 
-    vertical-align: middle;
-    display: inline-block;
-}
-
-.player-name-clickable {
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-}
-body.is-admin .player-name-clickable {
-    cursor: pointer; /* Смена роли доступна по клику только админу */
-}
-body.is-admin .player-name-clickable:hover {
-    color: #d97706; 
-}
-
-.rank-badge { 
-    background: #556b2f; 
-    color: white; 
-    font-weight: bold; 
-    padding: 4px 0; 
-    border-radius: 4px; 
-    font-size: 13px; 
-    width: 100%;
-    text-align: center; 
-}
-
-.player-meta-box {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.player-mini-stats {
-    font-size: 11px;
-    color: #a3a3a3;
-    font-family: monospace;
-}
-
+/* КАЛЬКУЛЯТОР МАТЧЕЙ */
 .match-scoreboard-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin: 25px 0;
-    background: #1a221e;
-    padding: 15px;
-    border-radius: 6px;
-    border: 1px solid #3f4e46;
+    display: flex; align-items: center; justify-content: space-between; gap: 15px;
+    margin: 25px 0; background: #1a221e; padding: 15px; border-radius: 6px; border: 1px solid #3f4e46;
 }
-
-.scoreboard-team {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 2; 
-}
-
+.scoreboard-team { display: flex; align-items: center; gap: 10px; flex: 2; }
 .scoreboard-team.left-side { justify-content: flex-start; }
 .scoreboard-team.right-side { justify-content: flex-end; }
 .scoreboard-team select { max-width: 180px; margin: 0; }
+.scoreboard-score-block { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1; }
+.score-input { width: 65px; display: inline-block; text-align: center; font-size: 20px; font-weight: bold; background: #2d3732; border: 1px solid #d97706; margin: 0; }
+.vs-label { font-weight: bold; color: #d97706; text-transform: uppercase; font-size: 14px; }
+.save-match-btn { max-width: 320px; display: block; margin: 20px auto; }
 
-.scoreboard-score-block {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    flex: 1; 
+/* ИСТОРИЯ ИГР КРУГОВОГО ЭТАПА */
+.history-title { margin-top: 40px; border-top: 1px solid #3f4e46; padding-top: 20px; }
+.history-row-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #1a221e; padding: 10px 15px; border-radius: 4px; margin-bottom: 6px; border: 1px solid #3f4e46;
 }
+.history-match-data { display: flex; align-items: center; gap: 8px; }
+.history-mini-logo { width: 18px; height: 18px; object-fit: cover; border-radius: 2px; }
+.score-badge { background: #2d3732; padding: 2px 8px; border-radius: 4px; font-family: monospace; color: #eccc68; font-weight: bold; }
+.history-time-badge { font-size: 11px; color: #a3a3a3; font-family: monospace; }
+.info-text { font-size: 13px; color: #a3a3a3; margin: 0 0 15px 0; }
 
-.score-input { 
-    width: 65px; 
-    display: inline-block; 
-    text-align: center; 
-    font-size: 20px; 
-    font-weight: bold; 
-    background: #2d3732;
-    border: 1px solid #d97706;
-    margin: 0;
-}
+/* МОДАЛЬНЫЕ ОКНА */
+.modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
+.modal-content { background: #2d3732; padding: 25px; border: 2px solid #4a5d52; border-radius: 8px; width: 92%; max-width: 380px; box-sizing: border-box; }
+.modal-btn-row { display: flex; gap: 10px; }
+.close-modal-btn { background: #4a5d52; color: #e2e8f0; margin-top: 15px; }
+.stat-control-row { display: flex; justify-content: space-between; align-items: center; margin: 14px 0; font-weight: bold; }
 
-.vs-label {
-    font-weight: bold; 
-    color: #d97706;
-    text-transform: uppercase;
-    font-size: 14px;
-}
-
-.save-match-btn {
-    max-width: 320px; 
-    display: block; 
-    margin: 20px auto;
-}
-
-.history-title {
-    margin-top: 40px; 
-    border-top: 1px solid #3f4e46; 
-    padding-top: 20px;
-}
-
-.info-text {
-    font-size: 13px; 
-    color: #a3a3a3; 
-    margin: 0 0 15px 0;
-}
-
-.modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    background-color: rgba(0,0,0,0.8); 
-    align-items: center;
-    justify-content: center;
-}
-.modal-content {
-    background: #2d3732;
-    padding: 25px;
-    border: 2px solid #4a5d52;
-    border-radius: 8px;
-    width: 92%;
-    max-width: 380px;
-    box-sizing: border-box;
-}
-.modal-btn-row {
-    display: flex;
-    gap: 10px;
-}
-.close-modal-btn {
-    background: #4a5d52; 
-    color: #e2e8f0; 
-    margin-top: 15px;
-}
-
-.stat-control-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 14px 0;
-    font-weight: bold;
-}
-
-/* МОБИЛЬНЫЕ НАСТРОЙКИ С УЧЕТОМ АВТОРИЗАЦИИ */
+/* АДАПТИВНОСТЬ ПОД МОБИЛЬНЫЕ (МЕНЮ НАВЕРХ) */
 @media screen and (max-width: 768px) {
-    body { margin: 10px; padding-top: 50px; }
+    .app-layout { flex-direction: column; }
+    .side-navigation {
+        width: 100%; height: auto; position: relative; border-right: none;
+        border-bottom: 1px solid #3f4e46; padding: 12px; gap: 10px;
+    }
+    .role-badge-container { margin-bottom: 10px; }
+    .menu-group { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px; }
+    .menu-item { width: auto; font-size: 12px; padding: 8px 10px; }
+    .menu-item.bracket-link-btn { margin-top: 0; }
+    .nav-footer { width: 100%; text-align: center; }
+    #authBtn { width: auto; padding: 6px 15px; display: inline-block; }
+    
+    .main-content-area { padding: 15px; }
     .container { flex-direction: column; gap: 15px; }
     .section, .full-section { min-width: 100%; padding: 12px; }
     .match-scoreboard-row { gap: 8px; padding: 10px; }
     .scoreboard-team select { max-width: 95px; padding: 8px; font-size: 13px; }
     .score-input { width: 48px; font-size: 16px; padding: 8px; }
     
-    .stats-header, #teamsList li .team-row-item {
-        grid-template-columns: 25px 2fr 1fr 1fr; /* Узкая сетка для зрителя */
-        font-size: 12px;
-        gap: 2px;
-    }
-    body.is-admin .stats-header, body.is-admin #teamsList li .team-row-item {
-        grid-template-columns: 25px 2fr 1fr 1fr 35px; /* Узкая сетка для админа */
-    }
-
+    .stats-header, .team-row-item { grid-template-columns: 25px 2fr 1fr 1fr; font-size: 12px; gap: 2px; }
+    body.is-admin .stats-header, body.is-admin .team-row-item { grid-template-columns: 25px 2fr 1fr 1fr 35px; }
     .hdr-team { padding-left: 36px; }
     .team-name-text { max-width: 85px; }
+    .history-row-item { flex-direction: column; align-items: flex-start; gap: 4px; }
 
     #playersList li { flex-direction: column; align-items: flex-start; gap: 12px; }
     #playersList li > div:last-child { width: 100%; justify-content: space-between; display: flex; gap: 5px; }

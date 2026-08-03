@@ -8,75 +8,134 @@
 </head>
 <body>
 
-    <!-- ВЕРХНЯЯ ПАНЕЛЬ АВТОРИЗАЦИИ С КНОПКОЙ СЕТКИ ПО ЦЕНТРУ -->
-    <div class="top-admin-bar">
-        <span id="adminStatusText">Режим: Зритель</span>
-        <button onclick="window.open('bracket.html', '_blank')" style="width: auto; padding: 4px 12px; margin: 0; font-size: 11px; background: #556b2f; color: white; border: 1px solid #3f4e46;">📊 Турнирная Сетка</button>
-        <button id="authBtn" onclick="handleAuthClick()">Админ</button>
-    </div>
-
-    <h1>Страйкбол: Система учета турниров</h1>
-    
-    <div class="container">
-        <!-- УПРАВЛЕНИЕ КОМАНДАМИ -->
-        <div class="section">
-            <h2>Команды и Рейтинг</h2>
-            <div class="form-group admin-only">
-                <input type="text" id="teamName" placeholder="Название команды">
-                <button onclick="addTeam()">Добавить команду</button>
+    <!-- ГЛАВНЫЙ КОНТЕЙНЕР ПРИЛОЖЕНИЯ -->
+    <div class="app-layout">
+        
+        <!-- ЛЕВОЕ НАВИГАЦИОННОЕ МЕНЮ (СТИЛЬ ВК) -->
+        <div class="side-navigation">
+            <div class="nav-header">
+                <h2>AIRSOFT CUP</h2>
+                <div class="role-badge-container">
+                    <span id="adminStatusText">Зритель</span>
+                </div>
             </div>
             
-            <div class="stats-header">
-                <span class="hdr-rank">№</span>
-                <span class="hdr-team">Команда</span>
-                <span class="hdr-stats">В-Н-П</span>
-                <span class="hdr-score">Очки</span>
-                <span class="hdr-action admin-only-cell"></span>
+            <div class="menu-group">
+                <button class="menu-item active" onclick="switchTab('main-tab', this)">🏠 Главная</button>
+                <button class="menu-item" onclick="switchTab('rating-tab', this)">🛡️ Команды и Игроки</button>
+                <button class="menu-item" onclick="switchTab('matches-tab', this)">⚔️ Калькулятор игр</button>
+                <button class="menu-item bracket-link-btn" onclick="window.open('bracket.html', '_blank')">📊 Турнирная Сетка ↗</button>
             </div>
-            <ul id="teamsList"></ul>
+
+            <div class="nav-footer">
+                <button id="authBtn" onclick="handleAuthClick()">Админ</button>
+            </div>
         </div>
 
-        <!-- УПРАВЛЕНИЕ ИГРОКАМИ -->
-        <div class="section">
-            <h2>Игроки и Роли</h2>
-            <div class="form-group admin-only">
-                <input type="text" id="playerName" placeholder="Имя нового игрока">
-                <button onclick="addPlayer()">Добавить игрока</button>
-            </div>
-            <ul id="playersList"></ul>
-        </div>
-    </div>
-
-    <!-- ИГРЫ КОМАНД -->
-    <div class="full-section">
-        <h2 id="matchSectionTitle">Результаты матчей</h2>
-        <p class="info-text">Калькулятор: Победа = 2 очка, Ничья = 1 очко, Поражение = 0 очков.</p>
-        
-        <div class="match-scoreboard-row admin-only-flex">
-            <div class="scoreboard-team left-side">
-                <div class="team-logo-box" id="logo-match-1">★</div>
-                <select id="matchTeam1" onchange="updateMatchLogos()"></select>
-            </div>
+        <!-- ЦЕНТРАЛЬНЫЙ БЛОК КОНТЕНТА -->
+        <div class="main-content-area">
             
-            <div class="scoreboard-score-block">
-                <input type="number" id="score1" class="score-input" placeholder="0" min="0">
-                <span class="vs-label">вс</span>
-                <input type="number" id="score2" class="score-input" placeholder="0" min="0">
-            </div>
-            
-            <div class="scoreboard-team right-side">
-                <select id="matchTeam2" onchange="updateMatchLogos()"></select>
-                <div class="team-logo-box" id="logo-match-2">★</div>
-            </div>
-        </div>
-        
-        <button onclick="recordMatch()" class="save-match-btn admin-only">Записать игру</button>
-        
-        <h2 class="history-title">История игр</h2>
-        <ul id="historyList"></ul>
-        <button onclick="clearHistory()" class="clear-btn admin-only">Очистить историю игр</button>
-    </div>
+            <!-- ВКЛАДКА 1: ГЛАВНАЯ СТРАНИЦА -->
+            <div id="main-tab" class="tab-content active">
+                <h1>О проекте</h1>
+                <div class="full-section text-content-card">
+                    <p>Добро пожаловать в <strong>Страйкбольный Турнирный Менеджер</strong> — специализированную экосистему для автоматизации учета результатов, ведения рейтингов и контроля тактических ограничений на военно-тактических соревнованиях.</p>
+                    
+                    <h3>Назначение системы:</h3>
+                    <ul>
+                        <li>✓ Автоматический расчет турнирных очков кругового этапа.</li>
+                        <li>✓ Живой подсчет индивидуального K/D (Kill/Death Ratio) бойцов.</li>
+                        <li>✓ Учет уникальных ролей с жестким лимитом специалистов в команде.</li>
+                        <li>✓ Интерактивное сквозное онлайн-табло кубка с автогенерацией финалов.</li>
+                    </ul>
 
+                    <div class="authors-block">
+                        <h3>Разработчики проекта:</h3>
+                        <div class="author-badge">
+                            <span class="author-icon">⚡</span>
+                            <div>
+                                <div class="author-name">Эдгар</div>
+                                <div class="author-callsign">Позывной: <b>Axelon</b></div>
+                            </div>
+                        </div>
+                        <div class="author-badge">
+                            <span class="author-icon">🛠️</span>
+                            <div>
+                                <div class="author-name">Сергей</div>
+                                <div class="author-callsign">Позывной: <b>Мастер</b></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ВКЛАДКА 2: РЕЙТИНГ И УПРАВЛЕНИЕ -->
+            <div id="rating-tab" class="tab-content">
+                <h1>Управление турниром</h1>
+                <div class="container">
+                    <!-- УПРАВЛЕНИЕ КОМАНДАМИ -->
+                    <div class="section">
+                        <h2>Команды и Рейтинг</h2>
+                        <div class="form-group admin-only">
+                            <input type="text" id="teamName" placeholder="Название команды">
+                            <button onclick="addTeam()">Добавить команду</button>
+                        </div>
+                        
+                        <div class="stats-header">
+                            <span class="hdr-rank">№</span>
+                            <span class="hdr-team">Команда</span>
+                            <span class="hdr-stats">В-Н-П</span>
+                            <span class="hdr-score">Очки</span>
+                            <span class="hdr-action admin-only-cell"></span>
+                        </div>
+                        <ul id="teamsList"></ul>
+                    </div>
+
+                    <!-- УПРАВЛЕНИЕ ИГРОКАМИ -->
+                    <div class="section">
+                        <h2>Игроки и Роли</h2>
+                        <div class="form-group admin-only">
+                            <input type="text" id="playerName" placeholder="Имя нового игрока">
+                            <button onclick="addPlayer()">Добавить игрока</button>
+                        </div>
+                        <ul id="playersList"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ВКЛАДКА 3: РЕЗУЛЬТАТЫ И КАЛЬКУЛЯТОР -->
+            <div id="matches-tab" class="tab-content">
+                <h1 id="matchSectionTitle">Результаты матчей</h1>
+                <div class="full-section">
+                    <p class="info-text">Правила начисления: Победа = 2 очка, Ничья = 1 очко, Поражение = 0 очков.</p>
+                    
+                    <div class="match-scoreboard-row admin-only-flex">
+                        <div class="scoreboard-team left-side">
+                            <div class="team-logo-box" id="logo-match-1">★</div>
+                            <select id="matchTeam1" onchange="updateMatchLogos()"></select>
+                        </div>
+                        
+                        <div class="scoreboard-score-block">
+                            <input type="number" id="score1" class="score-input" placeholder="0" min="0">
+                            <span class="vs-label">вс</span>
+                            <input type="number" id="score2" class="score-input" placeholder="0" min="0">
+                        </div>
+                        
+                        <div class="scoreboard-team right-side">
+                            <select id="matchTeam2" onchange="updateMatchLogos()"></select>
+                            <div class="team-logo-box" id="logo-match-2">★</div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="recordMatch()" class="save-match-btn admin-only">Записать игру</button>
+                    
+                    <h2 class="history-title">История игр</h2>
+                    <div id="historyList"></div>
+                    <button onclick="clearHistory()" class="clear-btn admin-only">Очистить историю игр</button>
+                </div>
+            </div>
+
+        </div> <!-- Закрываем .main-content-area -->
+    </div> <!-- Закрываем .app-layout -->
     <!-- МОДАЛЬНОЕ ОКНО АВТОРИЗАЦИИ АДМИНИСТРАТОРА -->
     <div id="authModal" class="modal">
         <div class="modal-content">
@@ -159,7 +218,7 @@
         </div>
     </div>
 
-        <!-- Драйвер базы загружается СТРОГО первым -->
+    <!-- Загрузка скриптов -->
     <script src="supabase-connect.js"></script>
     <script src="script.js"></script>
 </body>
