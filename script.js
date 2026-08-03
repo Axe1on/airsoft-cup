@@ -121,16 +121,36 @@ function toggleRoster(teamName) {
     renderUI();
 }
 
-/* Функция переключения вкладок левого меню */
+/* Глобальная переменная для хранения ID интервала автообновления */
+let tournamentIntervalId = null;
+
+/* ОБНОВЛЕННАЯ ФУНКЦИЯ: Переключение вкладок левого меню с автообновлением */
 function switchTab(tabId, menuElement) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
     
     document.getElementById(tabId).classList.add('active');
     if (menuElement) menuElement.classList.add('active');
+
+    // Очищаем старый таймер, если он был запущен
+    if (tournamentIntervalId) {
+        clearInterval(tournamentIntervalId);
+        tournamentIntervalId = null;
+    }
+
+    // Если пользователь перешел на вкладку "Турнир" (bracket-tab), запускаем живой таймер
+    if (tabId === 'bracket-tab') {
+        // Первое мгновенное обновление при клике
+        loadTournamentData(); 
+        
+        // Запуск интервала: 30000 миллисекунд = 30 секунд
+        tournamentIntervalId = setInterval(async () => {
+            console.log('Живое автообновление: запрашиваем сетку турнира...');
+            await loadTournamentData();
+        }, 30000);
+    }
 }
-function renderUI() {
-    updateAdminUI();
+
 
     /* 1. Рендер команд */
     const teamsList = document.getElementById('teamsList');
@@ -266,7 +286,7 @@ function renderUI() {
             }).join(''); 
         } 
     }
-}
+    
 function updateMatchLogos() { 
     const t1 = document.getElementById('matchTeam1').value; 
     const t2 = document.getElementById('matchTeam2').value; 
@@ -534,13 +554,76 @@ async function clearHistory() {
 /* Стартовая загрузка при открытии сайта */
 loadDataFromCloud();
 /* ==========================================================================
-   НОВЫЙ БЛОК: ЛОГИКА ДЛЯ ВСТРОЕННОЙ ВКЛАДКИ «ТУРНИР» (БЫВШИЙ BRACKET.HTML)
+   НОВЫЙ ТАКТИЧЕСКИЙ БЛОК: КРУГОВОЙ ОТБОР 4 КОМАНД + ПОЛУФИНАЛЫ И ФИНАЛЫ
    ========================================================================== */
 
-const allMatchIds = ['ga1', 'ga2', 'gb1', 'gb2', 'gc1', 'gc2', 'm3', 'gf'];
+// Полный перечень ID матчей: 6 игр отбора (ga1-gc2), 2 полуфинала (sf1, sf2), Бронза (m3), Финал (gf)
+const allMatchIds = ['ga1', 'ga2', 'gb1', 'gb2', 'gc1', 'gc2', 'sf1', 'sf2', 'm3', 'gf'];
 let cupScores = {};
 
-/* Синхронизация текста для зрителей */
+// Объект локального хранения выбранных организатором буквенных слотов
+let currentSlots = { A: "", B: "", C: "", D: "" };
+
+/* Автоматическое заполнение полей команд в сетке на основе выбранных слотов */
+function applySlotsToInputs() {
+    // Тур 1: A vs B, C vs D
+    setSlotTeamName('ga1-t1', currentSlots.A); setSlotTeamName('ga1-t2', currentSlots.B);
+    setSlotTeamName('ga2-t1', currentSlots.C); setSlotTeamName('ga2-t2', currentSlots.D);
+    
+    // Тур 2: A vs C, B vs D
+    setSlotTeamName('gb1-t1', currentSlots.A); setSlotTeamName('gb1-t2', currentSlots.C);
+    setSlotTeamName('gb2-t1', currentSlots.B); setSlotTeamName('gb2-t2', currentSlots.D);
+    
+    // Тур 3: A vs D, B vs C
+    setSlotTeamName('gc1-t1', currentSlots.A); setSlotTeamName('gc1-t2', currentSlots.D);
+    setSlotTeamName('gc2-t1', currentSlots.B); setSlotTeamName('gc2-t2', currentSlots.C);
+}
+
+function setSlotTeamName(inputId, name) {
+    const inp = document.getElementById('select-' + inputId);
+    const view = document.getElementById('view-' + inputId);
+    if (inp) inp.value = name || "";
+    if (view) view.innerText = name || "Ожидание...";
+}
+
+/* ОБЛАЧНОЕ СОХРАНЕНИЕ НАЗНАЧЕННЫХ СЛОТОВ A, B, C, D */
+async function saveSlotsToCloud() {
+    if (!isAdmin) return;
+    
+    currentSlots.A = document.getElementById('slot-team-A').value;
+    currentSlots.B = document.getElementById('slot-team-B').value;
+    currentSlots.C = document.getElementById('slot-team-C').value;
+    currentSlots.D = document.getElementById('slot-team-D').value;
+
+    applySlotsToInputs();
+
+    // Перезаписываем техническую запись слотов в таблице cup_matches с id='slots_config'
+    await supabaseClient.from('cup_matches').delete().eq('match_id', 'slots_config');
+    await supabaseClient.from('cup_matches').insert([{
+        match_id: 'slots_config',
+        team1: currentSlots.A,
+        team2: currentSlots.B,
+        score1: 0, // Неиспользуемое поле для слотов
+        score2: 0, // Неиспользуемое поле для слотов
+        is_played: false,
+        // Чтобы сохранить C и D, безопасно склеим их через разделитель в текстовые поля базы
+        team1_img: currentSlots.C, // Используем свободную текстовую ячейку под команду C
+        team2_img: currentSlots.D  // Используем свободную текстовую ячейку под команду D
+    }]);
+
+    // После обновления слотов принудительно пересохраняем пустые матчи отбора, чтобы обновить в базе имена участников
+    const roundIds = ['ga1', 'ga2', 'gb1', 'gb2', 'gc1', 'gc2'];
+    for (let id of roundIds) {
+        const b = document.getElementById('btn-' + id);
+        // Пересохраняем имена в базу, только если этот матч еще не был сыгран организатором
+        if (b && !b.hasAttribute('disabled')) {
+            await saveSelectionToCloud(id, 1, false);
+        }
+    }
+    await loadTournamentData();
+}
+
+/* Вспомогательные функции синхронизации данных */
 function syncViewerText(matchId, teamNum) {
     const selectEl = document.getElementById('select-' + matchId + '-t' + teamNum);
     const viewEl = document.getElementById('view-' + matchId + '-t' + teamNum);
@@ -549,14 +632,13 @@ function syncViewerText(matchId, teamNum) {
     }
 }
 
-/* Отрисовка живой таблицы очков кубка */
 function renderCupLeaderboard() {
     const lb = document.getElementById('cupGroupLeaderboard');
     if (!lb) return;
     
     let sorted = Object.keys(cupScores).sort((a, b) => cupScores[b] - cupScores[a]);
     if (sorted.length === 0) {
-        lb.innerHTML = '<li style="background:transparent; text-align:center; color:#a3a3a3; padding:10px;">Сыграйте матчи для расчета очков</li>';
+        lb.innerHTML = '<li style="background:transparent; text-align:center; color:#a3a3a3; padding:10px;">Назначьте команды и сыграйте матчи для расчета очков</li>';
         return;
     }
     
@@ -565,12 +647,10 @@ function renderCupLeaderboard() {
     }).join('');
 }
 
-/* Удаление старого выбора перед инсертом */
 async function removeOldCloudSelection(matchId) {
     await supabaseClient.from('cup_matches').delete().eq('match_id', matchId);
 }
 
-/* Сохранение промежуточного состояния (выбора команд/счета) в облако */
 async function saveSelectionToCloud(matchId, teamNum, forcedPlayedStatus) {
     if (!isAdmin) return;
     const t1 = document.getElementById('select-' + matchId + '-t1').value.trim();
@@ -593,34 +673,68 @@ async function saveSelectionToCloud(matchId, teamNum, forcedPlayedStatus) {
         is_played: isPlayedState
     }]);
 }
-
-/* Полная загрузка и восстановление состояния сетки кубка */
+/* ОБЛАЧНАЯ ЗАГРУЗКА И ПОЛНОЕ ВОССТАНОВЛЕНИЕ СОСТОЯНИЯ СЕТКИ ТУРНИРА (С ЗАЩИТОЙ ВВОДА АДМИНА) */
 async function loadTournamentData() {
     try {
-        /* Подгружаем актуальные команды для селектов */
+        // 1. Загружаем команды для выпадающих списков правых слотов организатора
         const { data: cloudTeams } = await supabaseClient.from('teams').select('*');
         let allCloudTeams = cloudTeams || [];
+        const sortedTeams = allCloudTeams.sort((a, b) => b.points - a.points);
 
-        allMatchIds.forEach((id) => {
-            const s1 = document.getElementById('select-' + id + '-t1');
-            const s2 = document.getElementById('select-' + id + '-t2');
-            
-            if (s1 && s2) {
-                const v1 = s1.value; const v2 = s2.value;
-                const optionsHTML = '<option value="">-- Команда --</option>' + 
-                    allCloudTeams.map(t => '<option value="' + t.name + '">' + t.name + '</option>').join('');
+        ['A', 'B', 'C', 'D'].forEach(slot => {
+            const el = document.getElementById('slot-team-' + slot);
+            if (el) {
+                // Если админ прямо сейчас выбирает команду в этом селекте, не сбрасываем его фокус
+                if (document.activeElement === el) return;
                 
-                s1.innerHTML = optionsHTML; s2.innerHTML = optionsHTML;
-                if (v1) s1.value = v1;
-                if (v2) s2.value = v2;
+                const currentVal = el.value;
+                el.innerHTML = '<option value="">-- Выбрать команду --</option>' + 
+                    sortedTeams.map(t => '<option value="' + t.name + '">' + t.name + '</option>').join('');
+                if (currentVal) el.value = currentVal;
             }
         });
 
         cupScores = {};
-        /* Подгружаем сыгранные и сохраненные матчи кубка */
+        // Инициализируем базовые структуры для вывода пустых результатов
+        allMatchIds.forEach(id => {
+            const b = document.getElementById('btn-' + id);
+            if (b) {
+                b.innerText = "Записать матч";
+                b.style.background = "#d97706"; b.style.color = "#1e2522";
+                b.removeAttribute('disabled');
+            }
+            const sc1 = document.getElementById('score-' + id + '-t1');
+            const sc2 = document.getElementById('score-' + id + '-t2');
+            if (sc1 && sc2 && !isAdmin) { sc1.value = ""; sc2.value = ""; }
+        });
+
+        // 2. Загружаем сохраненные данные кубка из облака
         const { data: savedCupMatches } = await supabaseClient.from('cup_matches').select('*');
+        
         if (savedCupMatches) {
+            // Сначала восстанавливаем конфигурацию слотов A, B, C, D
+            const slotsConfig = savedCupMatches.find(m => m.match_id === 'slots_config');
+            if (slotsConfig) {
+                currentSlots.A = slotsConfig.team1 ? slotsConfig.team1.trim() : "";
+                currentSlots.B = slotsConfig.team2 ? slotsConfig.team2.trim() : "";
+                currentSlots.C = slotsConfig.team1_img ? slotsConfig.team1_img.trim() : "";
+                currentSlots.D = slotsConfig.team2_img ? slotsConfig.team2_img.trim() : "";
+
+                ['A', 'B', 'C', 'D'].forEach(slot => {
+                    const el = document.getElementById('slot-team-' + slot);
+                    if (el && currentSlots[slot]) {
+                        if (document.activeElement !== el) el.value = currentSlots[slot];
+                    }
+                });
+            }
+
+            // Накатываем жесткую сетку отбора на основе загруженных слотов
+            applySlotsToInputs();
+
+            // Распределяем сохраненные результаты матчей по карточкам
             savedCupMatches.forEach(m => {
+                if (m.match_id === 'slots_config') return;
+
                 const s1 = document.getElementById('select-' + m.match_id + '-t1');
                 const s2 = document.getElementById('select-' + m.match_id + '-t2');
                 const sc1 = document.getElementById('score-' + m.match_id + '-t1');
@@ -632,16 +746,15 @@ async function loadTournamentData() {
 
                 if (s1 && t1Clean) s1.value = t1Clean;
                 if (s2 && t2Clean) s2.value = t2Clean;
-                if (sc1 && m.score1 !== undefined) sc1.value = m.score1;
-                if (sc2 && m.score2 !== undefined) sc2.value = m.score2;
                 
-                if (t1Clean && !cupScores[t1Clean]) cupScores[t1Clean] = 0;
-                if (t2Clean && !cupScores[t2Clean]) cupScores[t2Clean] = 0;
+                // ЗАЩИТА: Если админ сейчас вводит счет в это поле, автообновление его не затирает
+                if (sc1 && m.score1 !== undefined && document.activeElement !== sc1) sc1.value = m.score1;
+                if (sc2 && m.score2 !== undefined && document.activeElement !== sc2) sc2.value = m.score2;
 
                 if (t1Clean) document.getElementById('view-' + m.match_id + '-t1').innerText = t1Clean;
                 if (t2Clean) document.getElementById('view-' + m.match_id + '-t2').innerText = t2Clean;
-                
-                /* Жесткая фиксация заблокированных кнопок при перезагрузке */
+
+                // Если матч зафиксирован в облаке как сыгранный
                 if (m.is_played) {
                     document.getElementById('score-view-' + m.match_id + '-t1').innerText = m.score1;
                     document.getElementById('score-view-' + m.match_id + '-t2').innerText = m.score2;
@@ -652,23 +765,37 @@ async function loadTournamentData() {
                         b.setAttribute('disabled', 'true');
                     }
 
-                    let winTeam = (m.score1 > m.score2) ? t1Clean : t2Clean;
-                    if (winTeam) cupScores[winTeam] += 2;
+                    // Очки в живую таблицу начисляются ТОЛЬКО за матчи отборочного тура (ga, gb, gc)
+                    const isRoundRobin = m.match_id.startsWith('ga') || m.match_id.startsWith('gb') || m.match_id.startsWith('gc');
+                    if (isRoundRobin) {
+                        if (t1Clean && !cupScores[t1Clean]) cupScores[t1Clean] = 0;
+                        if (t2Clean && !cupScores[t2Clean]) cupScores[t2Clean] = 0;
+                        
+                        let winTeam = (m.score1 > m.score2) ? t1Clean : t2Clean;
+                        if (winTeam) {
+                            if (!cupScores[winTeam]) cupScores[winTeam] = 0;
+                            cupScores[winTeam] += 2;
+                        }
+                    }
                 } else {
                     document.getElementById('score-view-' + m.match_id + '-t1').innerText = "-";
                     document.getElementById('score-view-' + m.match_id + '-t2').innerText = "-";
                 }
             });
+        } else {
+            applySlotsToInputs();
         }
 
+        // Синхронизируем текстовые поля
         allMatchIds.forEach(id => {
             syncViewerText(id, 1);
             syncViewerText(id, 2);
         });
 
+        // Выводим отсортированную живую таблицу очков отбора
         renderCupLeaderboard();
 
-        /* Восстановление пьедестала */
+        // Восстановление призеров на пьедестале
         let gfData = savedCupMatches ? savedCupMatches.find(m => m.match_id === 'gf' && m.is_played) : null;
         let m3Data = savedCupMatches ? savedCupMatches.find(m => m.match_id === 'm3' && m.is_played) : null;
         if (gfData) {
@@ -676,18 +803,24 @@ async function loadTournamentData() {
             let l = (gfData.score1 > gfData.score2) ? gfData.team2.trim() : gfData.team1.trim();
             document.getElementById('podium-1').innerHTML = '🥇 <b style="color:#fff; font-size:16px;">🏆 ' + w + '</b>';
             document.getElementById('podium-2').innerHTML = '🥈 <b style="font-size:14px;">' + l + '</b>';
+        } else {
+            document.getElementById('podium-1').innerHTML = '🥇 Ожидание...';
+            document.getElementById('podium-2').innerHTML = '🥈 Ожидание...';
         }
         if (m3Data) {
             let w = (m3Data.score1 > m3Data.score2) ? m3Data.team1.trim() : m3Data.team2.trim();
             document.getElementById('podium-3').innerHTML = '🥉 <b>' + w + '</b>';
+        } else {
+            document.getElementById('podium-3').innerHTML = '🥉 Ожидание...';
         }
 
     } catch (err) {
         console.error('Ошибка связи с облаком в сетке:', err.message);
     }
 }
-/* Фиксация конкретного матча кубка, начисление очков и проверка финалов */
-async function executeMatch(id) {
+
+/* ПРОВЕДЕНИЕ МАТЧА КУБКА, НАЧИСЛЕНИЕ ОЧКОВ И СЛОЖНАЯ СИСТЕМА ПЕРЕХОДОВ В ПОЛУФИНАЛЫ И ФИНАЛЫ */
+async function executeCupMatch(id) {
     const t1 = document.getElementById('select-' + id + '-t1').value.trim();
     const t2 = document.getElementById('select-' + id + '-t2').value.trim();
     const s1 = parseInt(document.getElementById('score-' + id + '-t1').value);
@@ -698,23 +831,27 @@ async function executeMatch(id) {
         return;
     }
     if (s1 === s2) {
-        alert("В кубковых матчах должна быть определена победа одной из команд!");
+        alert("В кубковых раундах и отборе должна быть определена победа одной из команд!");
         return;
     }
 
     let winner = (s1 > s2) ? t1 : t2;
     let loser = (s1 > s2) ? t2 : t1;
 
-    if (!cupScores[t1]) cupScores[t1] = 0;
-    if (!cupScores[t2]) cupScores[t2] = 0;
-    cupScores[winner] += 2;
+    // Начисляем локальные очки для живой таблицы, если это отбор
+    const isRoundRobin = id.startsWith('ga') || id.startsWith('gb') || id.startsWith('gc');
+    if (isRoundRobin) {
+        if (!cupScores[t1]) cupScores[t1] = 0;
+        if (!cupScores[t2]) cupScores[t2] = 0;
+        cupScores[winner] += 2;
+    }
 
     /* Мгновенно выводим счет на табло зрителя */
     document.getElementById('score-view-' + id + '-t1').innerText = s1;
     document.getElementById('score-view-' + id + '-t2').innerText = s2;
 
     if (isAdmin) {
-        /* Подтягиваем актуальный список команд для обновления глобального рейтинга */
+        // Синхронизируем результаты в глобальную общую таблицу teams и пишем лог
         const { data: cloudTeams } = await supabaseClient.from('teams').select('*');
         let allCloudTeams = cloudTeams || [];
         
@@ -734,41 +871,88 @@ async function executeMatch(id) {
         }
     }
 
-    /* ЖЕСТКАЯ БЛОКИРОВКА КНОПКИ В ИНТЕРФЕЙСЕ */
+    /* ЖЕСТКАЯ БЛОКИРОВКА КНОПКИ */
     const b = document.getElementById('btn-' + id);
     if (b) {
         b.innerText = "Матч сыгран ✓";
-        b.style.background = "#4a5d52"; 
-        b.style.color = "#a3a3a3";
+        b.style.background = "#4a5d52"; b.style.color = "#a3a3a3";
         b.setAttribute('disabled', 'true');
     }
 
-    /* Принудительно передаем true в облако для фиксации состояния сыгранности */
+    // Сохраняем сыгранный матч в базу со статусом true
     await saveSelectionToCloud(id, 1, true);
     renderCupLeaderboard();
 
+    // ПРОВЕРКА 1: Завершение отборочного тура -> Автовыход в Полуфиналы
     const roundMatchIds = ['ga1', 'ga2', 'gb1', 'gb2', 'gc1', 'gc2'];
-    /* Считаем сыгранные матчи по реальным заблокированным кнопкам */
     let roundFinishedCount = roundMatchIds.filter(mid => document.getElementById('btn-' + mid).hasAttribute('disabled')).length;
 
-    if (roundFinishedCount === 6 && id !== 'm3' && id !== 'gf') {
-        let sortedCupTeams = Object.keys(cupScores).sort((a, b) => cupScores[b] - cupScores[a]);
+    if (roundFinishedCount === 6 && isRoundRobin) {
+        // Берем жесткий список из 4 команд, которые были заявлены в слотах, чтобы не подмешать другие команды из базы
+        let active4Teams = [currentSlots.A, currentSlots.B, currentSlots.C, currentSlots.D].filter(Boolean);
+        
+        // Гарантируем, что для каждой из 4 команд есть ячейка очков
+        active4Teams.forEach(t => { if (cupScores[t] === undefined) cupScores[t] = 0; });
+
+        // Сортируем эти 4 команды по живым очкам отбора
+        let sortedCupTeams = active4Teams.sort((a, b) => cupScores[b] - cupScores[a]);
         
         if (sortedCupTeams.length >= 4) {
-            document.getElementById('select-gf-t1').value = sortedCupTeams[0]; syncViewerText('gf', 1);
-            document.getElementById('select-gf-t2').value = sortedCupTeams[1]; syncViewerText('gf', 2);
-            document.getElementById('select-m3-t1').value = sortedCupTeams[2]; syncViewerText('m3', 1);
-            document.getElementById('select-m3-t2').value = sortedCupTeams[3]; syncViewerText('m3', 2);
+            // Полуфинал 1: 1 место против 2 места
+            document.getElementById('select-sf1-t1').value = sortedCupTeams[0]; syncViewerText('sf1', 1);
+            document.getElementById('select-sf1-t2').value = sortedCupTeams[1]; syncViewerText('sf1', 2);
             
-            /* Фиксируем сгенерированные финалы в базе как еще не сыгранные (false) */
-            await saveSelectionToCloud('gf', 1, false);
-            await saveSelectionToCloud('m3', 1, false);
+            // Полуфинал 2: 3 место против 4 места
+            document.getElementById('select-sf2-t1').value = sortedCupTeams[2]; syncViewerText('sf2', 1);
+            document.getElementById('select-sf2-t2').value = sortedCupTeams[3]; syncViewerText('sf2', 2);
             
-            alert("Круговой этап завершен! Команды автоматически распределены по финалам на основе живых очков кубка.");
+            // Фиксируем полуфиналы в базе как готовые к игре (false)
+            await saveSelectionToCloud('sf1', 1, false);
+            await saveSelectionToCloud('sf2', 1, false);
+            
+            alert("Отборочный тур завершен! Сформированы Полуфиналы:\nПФ 1: " + sortedCupTeams[0] + " vs " + sortedCupTeams[1] + "\nПФ 2: " + sortedCupTeams[2] + " vs " + sortedCupTeams[3]);
         }
     }
 
-    /* Мгновенная отрисовка пьедестала */
+    // ПРОВЕРКА 2: Завершение обоих Полуфиналов -> Автовыход в Финал и Бронзу
+    if (id === 'sf1' || id === 'sf2') {
+        const bSf1 = document.getElementById('btn-sf1').hasAttribute('disabled');
+        const bSf2 = document.getElementById('btn-sf2').hasAttribute('disabled');
+
+        if (bSf1 && bSf2) {
+            // Разбираем Полуфинал 1
+            const sf1_s1 = parseInt(document.getElementById('score-sf1-t1').value) || 0;
+            const sf1_s2 = parseInt(document.getElementById('score-sf1-t2').value) || 0;
+            const sf1_t1 = document.getElementById('select-sf1-t1').value;
+            const sf1_t2 = document.getElementById('select-sf1-t2').value;
+            let sf1_winner = (sf1_s1 > sf1_s2) ? sf1_t1 : sf1_t2;
+            let sf1_loser = (sf1_s1 > sf1_s2) ? sf1_t2 : sf1_t1;
+
+            // Разбираем Полуфинал 2
+            const sf2_s1 = parseInt(document.getElementById('score-sf2-t1').value) || 0;
+            const sf2_s2 = parseInt(document.getElementById('score-sf2-t2').value) || 0;
+            const sf2_t1 = document.getElementById('select-sf2-t1').value;
+            const sf2_t2 = document.getElementById('select-sf2-t2').value;
+            let sf2_winner = (sf2_s1 > sf2_s2) ? sf2_t1 : sf2_t2;
+            let sf2_loser = (sf2_s1 > sf2_s2) ? sf2_t2 : sf2_t1;
+
+            // Гранд-Финал: победители ПФ1 и ПФ2
+            document.getElementById('select-gf-t1').value = sf1_winner; syncViewerText('gf', 1);
+            document.getElementById('select-gf-t2').value = sf2_winner; syncViewerText('gf', 2);
+
+            // Матч за 3 место: проигравшие ПФ1 и ПФ2
+            document.getElementById('select-m3-t1').value = sf1_loser; syncViewerText('m3', 1);
+            document.getElementById('select-m3-t2').value = sf2_loser; syncViewerText('m3', 2);
+
+            // Сохраняем пары финалов в облако
+            await saveSelectionToCloud('gf', 1, false);
+            await saveSelectionToCloud('m3', 1, false);
+
+            alert("Полуфиналы сыграны! Сформированы пары:\nГранд-Финал: " + sf1_winner + " vs " + sf2_winner + "\nМатч за Бронзу: " + sf1_loser + " vs " + sf2_loser);
+        }
+    }
+
+    // Мгновенный вывод призеров на пьедестал
     if (id === 'm3') {
         document.getElementById('podium-3').innerHTML = '🥉 <b>' + winner + '</b>';
     }
@@ -780,18 +964,27 @@ async function executeMatch(id) {
     await loadTournamentData();
 }
 
-/* Полный сброс и очистка всех таблиц кубка */
+/* ОЧИСТКА ВСЕГО КУБКА И СБРОС СЛОТОВ НАЗНАЧЕНИЯ */
 async function clearBracketTables() {
-    if (confirm("Вы уверены, что хотите полностью очистить табло кубка и разблокировать все кнопки?")) {
+    if (confirm("Вы уверены, что хотите ПОЛНОСТЬЮ стереть результаты кубка, сбросить слоты A, B, C, D и разблокировать все кнопки?")) {
         cupScores = {};
+        currentSlots = { A: "", B: "", C: "", D: "" };
+        
+        // Полная очистка таблицы cup_matches
         await supabaseClient.from('cup_matches').delete().neq('match_id', '');
 
+        // Очищаем селекты слотов в админ-панели
+        ['A', 'B', 'C', 'D'].forEach(slot => {
+            const el = document.getElementById('slot-team-' + slot);
+            if (el) el.value = "";
+        });
+
+        // Разблокируем интерфейс сетки
         allMatchIds.forEach(id => {
             const b = document.getElementById('btn-' + id);
             if (b) { 
-                b.innerText = "Сыграть матч"; 
-                b.style.background = "#d97706"; 
-                b.style.color = "#1e2522"; 
+                b.innerText = "Записать матч"; 
+                b.style.background = "#d97706"; b.style.color = "#1e2522"; 
                 b.removeAttribute('disabled');
             }
             const sc1 = document.getElementById('score-' + id + '-t1');
@@ -812,6 +1005,6 @@ async function clearBracketTables() {
         document.getElementById('podium-3').innerHTML = '🥉 Ожидание...';
 
         await loadTournamentData();
-        alert("Таблицы кубка полностью очищены и разблокированы!");
+        alert("Турнирная сетка и слоты успешно обнулены!");
     }
 }

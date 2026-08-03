@@ -584,3 +584,110 @@ button.action-btn:disabled { background: #4a5d52; color: #a3a3a3; cursor: defaul
         gap: 10px;
     }
 }
+/* ДВУХКОЛОНОЧНЫЙ МАКЕТ ТУРНИРА */
+.tournament-layout-wrapper {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
+}
+
+/* Переопределяем сетку, чтобы она занимала всю оставшуюся область */
+.tournament-layout-wrapper .bracket-row-layout {
+    flex: 1;
+    margin-top: 0;
+}
+
+/* ПРАВАЯ ПАНЕЛЬ НАЗНАЧЕНИЯ СЛОТОВ */
+.tournament-sidebar-panel {
+    width: 280px;
+    background: #161c19;
+    border: 1px solid #3f4e46;
+    border-radius: 6px;
+    padding: 15px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #eccc68;
+    font-size: 14px;
+    border-bottom: 1px solid #3f4e46;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.sidebar-info-text {
+    font-size: 11px;
+    color: #a3a3a3;
+    line-height: 1.4;
+    margin-bottom: 15px;
+}
+
+.slot-input-group {
+    margin-bottom: 12px;
+}
+
+.slot-input-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #b3c0a4;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.slot-input-group select {
+    padding: 8px;
+    font-size: 13px;
+    background: #1a221e;
+}
+
+/* МЕТКИ ВНУТРИ КАРТОЧЕК */
+.slot-lbl {
+    font-size: 12px;
+    font-weight: bold;
+    color: #eccc68;
+    width: 18px;
+    display: inline-block;
+}
+
+.matchup-card input[readonly] {
+    background: #1a221e;
+    color: #e2e8f0;
+    border: 1px solid #3f4e46;
+    cursor: default;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 6px 10px;
+    text-align: left;
+}
+/* МЕТКИ НАЗВАНИЙ ДЛЯ ПОЛУФИНАЛОВ И ФИНАЛОВ */
+.sf-tag {
+    font-size: 10px;
+    font-weight: bold;
+    color: #b3c0a4;
+    text-transform: uppercase;
+    background: #1a221e;
+    padding: 3px 6px;
+    border-radius: 4px;
+    text-align: center;
+    border: 1px solid #3f4e46;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+/* МОБИЛЬНАЯ АДАПТАЦИЯ ДЛЯ ДВУХКОЛОНОЧНОГО МАКЕТА */
+@media screen and (max-width: 768px) {
+    .tournament-layout-wrapper {
+        flex-direction: column-reverse; /* Сетка остается сверху, панель админа уходит вниз */
+        gap: 15px;
+    }
+    
+    .tournament-sidebar-panel {
+        width: 100%;
+    }
+}
